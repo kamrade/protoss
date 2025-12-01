@@ -13,7 +13,11 @@ import { PlusIcon } from "@radix-ui/react-icons";
 import { AddCorporate } from "@/features/associated-entities/AddCorporate";
 import { AddIndividual } from "@/features/associated-entities/AddIndividual";
 
-import type { AssociatedEntity, IndividualAssociatedEntity } from "@/types";
+import type {
+  AssociatedEntity,
+  CorporateAssociatedEntity,
+  IndividualAssociatedEntity,
+} from "@/types";
 
 type DialogType = "individual" | "corporate";
 
@@ -63,6 +67,10 @@ export default function AssociatedEntitiesPage() {
   };
 
   const handleAddIndividual = (entity: IndividualAssociatedEntity) => {
+    setAssociatedEntities((prev) => [...prev, entity]);
+  };
+
+  const handleAddCorporate = (entity: CorporateAssociatedEntity) => {
     setAssociatedEntities((prev) => [...prev, entity]);
   };
 
@@ -120,6 +128,7 @@ export default function AssociatedEntitiesPage() {
         open={activeDialog?.type === "corporate"}
         onOpenChange={handleDialogChange}
         section={activeDialog?.section ?? ""}
+        onSubmit={handleAddCorporate}
       />
 
       <p className="text-sm text-gray-500">
