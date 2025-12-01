@@ -1,7 +1,6 @@
 "use client";
 
 import * as React from "react";
-import { useState } from 'react'
 
 import { IconButton } from "@/components/IconButton";
 import {
@@ -14,7 +13,7 @@ import { PlusIcon } from "@radix-ui/react-icons";
 import { AddCorporate } from "@/features/associated-entities/AddCorporate";
 import { AddIndividual } from "@/features/associated-entities/AddIndividual";
 
-import type { AssociatedEntity } from '@/types';
+import type { AssociatedEntity, IndividualAssociatedEntity } from "@/types";
 
 type DialogType = "individual" | "corporate";
 
@@ -43,13 +42,15 @@ const entitySections = [
 ] as const;
 
 export default function AssociatedEntitiesPage() {
-
-  const [ associatedEntities, setAssociatedEntities ] = useState<AssociatedEntity[]>();
-  
+  const [associatedEntities, setAssociatedEntities] = React.useState<AssociatedEntity[]>([]);
   const [activeDialog, setActiveDialog] = React.useState<{
     type: DialogType;
     section: string;
   } | null>(null);
+
+  React.useEffect(() => {
+    console.log(associatedEntities);
+  });
 
   const openDialog = (type: DialogType, section: string) => {
     setActiveDialog({ type, section });
@@ -59,6 +60,10 @@ export default function AssociatedEntitiesPage() {
     if (!open) {
       setActiveDialog(null);
     }
+  };
+
+  const handleAddIndividual = (entity: IndividualAssociatedEntity) => {
+    setAssociatedEntities((prev) => [...prev, entity]);
   };
 
   return (
@@ -109,12 +114,17 @@ export default function AssociatedEntitiesPage() {
         open={activeDialog?.type === "individual"}
         onOpenChange={handleDialogChange}
         section={activeDialog?.section ?? ""}
+        onSubmit={handleAddIndividual}
       />
       <AddCorporate
         open={activeDialog?.type === "corporate"}
         onOpenChange={handleDialogChange}
         section={activeDialog?.section ?? ""}
       />
+
+      <p className="text-sm text-gray-500">
+        Records captured this session: {associatedEntities.length}
+      </p>
     </main>
   );
 }

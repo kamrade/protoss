@@ -1,23 +1,16 @@
-В диалог AddIndividual добавить поля:
+В диалог AddCorporate добавить поля:
 
-First Name - TextField
-Middle Name - TextField
-Last Name - TextField
-Date of birth - Datepicker
-Place of birth - TextField
-Nationality - Select (countries)
-Id Number - TextField
-Address - TextField
-city - TextField
-country - Select (countries)
-postcode - TextField
-email - TextField
+Legal Entity Name - TextField
+Trading Name (if different) - TextField
+Company registration number - TextField
+Legal Entity Type - Select
 
-также нужно добавить группу чекбоксов под заголовком Roles
+также нужно добавить группу чекбоксов под заголовком Roles.
 - Shareholder
-- Director
-- Associated Entity
-- User
 
-при нажатии кнопки Add Individual - сохранять в массив associatedEntities.
-affiliation заполнять согласно тому, какая была выбрана секция - 
+При выборе из секции Shareholders (пока только из нее), соответственный Checkbox должен быть предустановлен.
+
+При установленном checkbox Shareholder, отобразить TextField - % Shareholding
+
+
+при нажатии кнопки Add Corporate - сохранять в массив associatedEntities согласно модели.
