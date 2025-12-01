@@ -15,17 +15,28 @@ const sizeExamples = [
 
 export function ButtonShowcase() {
   return (
-    <>
-      <section className="rounded-2xl border border-gray-200 bg-white p-6 shadow-sm">
-        <div className="flex items-center justify-between">
-          <h2 className="text-xl font-semibold text-gray-900">Variants</h2>
-          <Link
-            href="/"
-            className="text-sm font-medium text-gray-500 hover:text-gray-900"
-          >
-            Back home
-          </Link>
+    <section className="flex flex-col gap-6">
+      <div className="flex items-center justify-between">
+        <div>
+          <p className="text-xs uppercase tracking-[0.3em] text-gray-500">
+            Component
+          </p>
+          <h2 className="text-3xl font-semibold text-gray-900">Buttons</h2>
+          <p className="mt-2 text-sm text-gray-600">
+            High-level calls to action with support for variants, sizes, and link
+            rendering via Radix Slot.
+          </p>
         </div>
+        <Link
+          href="/"
+          className="text-sm font-medium text-gray-500 hover:text-gray-900"
+        >
+          Back home
+        </Link>
+      </div>
+
+      <div className="rounded-2xl border border-gray-200 bg-white p-6 shadow-sm">
+        <h3 className="text-xl font-semibold text-gray-900">Variants</h3>
         <div className="mt-4 flex flex-wrap gap-4">
           {variantExamples.map(({ variant, label }) => (
             <Button key={variant} variant={variant}>
@@ -33,10 +44,10 @@ export function ButtonShowcase() {
             </Button>
           ))}
         </div>
-      </section>
+      </div>
 
-      <section className="rounded-2xl border border-gray-200 bg-white p-6 shadow-sm">
-        <h2 className="text-xl font-semibold text-gray-900">Sizes</h2>
+      <div className="rounded-2xl border border-gray-200 bg-white p-6 shadow-sm">
+        <h3 className="text-xl font-semibold text-gray-900">Sizes</h3>
         <div className="mt-4 flex flex-wrap items-end gap-4">
           {sizeExamples.map(({ size, label }) => (
             <Button key={size} size={size} variant="primary">
@@ -44,10 +55,10 @@ export function ButtonShowcase() {
             </Button>
           ))}
         </div>
-      </section>
+      </div>
 
-      <section className="rounded-2xl border border-gray-200 bg-white p-6 shadow-sm">
-        <h2 className="text-xl font-semibold text-gray-900">States</h2>
+      <div className="rounded-2xl border border-gray-200 bg-white p-6 shadow-sm">
+        <h3 className="text-xl font-semibold text-gray-900">States</h3>
         <div className="mt-4 flex flex-wrap gap-4">
           <Button>Default</Button>
           <Button disabled>Disabled</Button>
@@ -55,7 +66,7 @@ export function ButtonShowcase() {
             <Link href="/associated-entities">As Child Link</Link>
           </Button>
         </div>
-      </section>
-    </>
+      </div>
+    </section>
   );
 }
