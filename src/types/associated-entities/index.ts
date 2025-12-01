@@ -1,3 +1,5 @@
+export type DialogType = "individual" | "corporate";
+
 export type AffiliationType =
   'WALLET_SIGNATORY'
   | 'SHAREHOLDER'
