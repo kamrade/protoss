@@ -1,27 +1,63 @@
+"use client";
+
+import * as React from "react";
+import { useState } from 'react'
+
 import { IconButton } from "@/components/IconButton";
-import { DropdownMenu, DropdownMenuContent, DropdownMenuItem, DropdownMenuTrigger } from "@/components/DropdownMenu";
+import {
+  DropdownMenu,
+  DropdownMenuContent,
+  DropdownMenuItem,
+  DropdownMenuTrigger,
+} from "@/components/DropdownMenu";
 import { PlusIcon } from "@radix-ui/react-icons";
+import { AddCorporate } from "@/features/associated-entities/AddCorporate";
+import { AddIndividual } from "@/features/associated-entities/AddIndividual";
+
+import type { AssociatedEntity } from '@/types';
+
+type DialogType = "individual" | "corporate";
+
+const [ associatedEntities, setAssociatedEntities ] = useState<AssociatedEntity[]>();
 
 const entitySections = [
   {
     title: "Shareholders",
-    options: ["Individual", "Corporate"],
+    options: [
+      { label: "Individual", type: "individual" },
+      { label: "Corporate", type: "corporate" },
+    ],
   },
   {
     title: "Directors",
-    options: ["Individual"],
+    options: [{ label: "Individual", type: "individual" }],
   },
   {
     title: "Authorised Signatories",
-    options: ["Individual"],
+    options: [{ label: "Individual", type: "individual" }],
   },
   {
     title: "Users",
-    options: ["Individual"],
+    options: [{ label: "Individual", type: "individual" }],
   },
 ] as const;
 
 export default function AssociatedEntitiesPage() {
+  const [activeDialog, setActiveDialog] = React.useState<{
+    type: DialogType;
+    section: string;
+  } | null>(null);
+
+  const openDialog = (type: DialogType, section: string) => {
+    setActiveDialog({ type, section });
+  };
+
+  const handleDialogChange = (open: boolean) => {
+    if (!open) {
+      setActiveDialog(null);
+    }
+  };
+
   return (
     <main className="mx-auto flex max-w-4xl flex-col gap-8 px-6 py-16">
       <header className="flex flex-col gap-2">
@@ -48,8 +84,13 @@ export default function AssociatedEntitiesPage() {
                   </IconButton>
                 </DropdownMenuTrigger>
                 <DropdownMenuContent align="end">
-                  {options.map((option) => (
-                    <DropdownMenuItem key={option}>{option}</DropdownMenuItem>
+                  {options.map(({ label, type }) => (
+                    <DropdownMenuItem
+                      key={label}
+                      onSelect={() => openDialog(type, title)}
+                    >
+                      {label}
+                    </DropdownMenuItem>
                   ))}
                 </DropdownMenuContent>
               </DropdownMenu>
@@ -60,6 +101,17 @@ export default function AssociatedEntitiesPage() {
           </section>
         ))}
       </div>
+
+      <AddIndividual
+        open={activeDialog?.type === "individual"}
+        onOpenChange={handleDialogChange}
+        section={activeDialog?.section ?? ""}
+      />
+      <AddCorporate
+        open={activeDialog?.type === "corporate"}
+        onOpenChange={handleDialogChange}
+        section={activeDialog?.section ?? ""}
+      />
     </main>
   );
 }

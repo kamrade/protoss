@@ -1,4 +1,5 @@
 import { ButtonShowcase } from "./ButtonShowcase";
+import { DialogShowcase } from "./DialogShowcase";
 import { DropdownMenuShowcase } from "./DropdownMenuShowcase";
 import { IconButtonShowcase } from "./IconButtonShowcase";
 import { TextFieldShowcase } from "./TextFieldShowcase";
@@ -22,6 +23,7 @@ export default function ShowcasePage() {
       <IconButtonShowcase />
       <TextFieldShowcase />
       <DropdownMenuShowcase />
+      <DialogShowcase />
     </main>
   );
 }
