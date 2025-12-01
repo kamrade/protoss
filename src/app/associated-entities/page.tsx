@@ -18,7 +18,7 @@ import type { AssociatedEntity } from '@/types';
 
 type DialogType = "individual" | "corporate";
 
-const [ associatedEntities, setAssociatedEntities ] = useState<AssociatedEntity[]>();
+
 
 const entitySections = [
   {
@@ -43,6 +43,9 @@ const entitySections = [
 ] as const;
 
 export default function AssociatedEntitiesPage() {
+
+  const [ associatedEntities, setAssociatedEntities ] = useState<AssociatedEntity[]>();
+  
   const [activeDialog, setActiveDialog] = React.useState<{
     type: DialogType;
     section: string;
