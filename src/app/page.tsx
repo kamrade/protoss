@@ -19,6 +19,12 @@ const sections = [
     description:
       "Monitor individual activity streams and compliance approvals in real time.",
   },
+  {
+    href: "/showcase",
+    title: "Showcase",
+    description:
+      "Preview Radix-based components and usage guidelines for new screens.",
+  },
 ];
 
 export default function Home() {
