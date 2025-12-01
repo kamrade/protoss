@@ -11,6 +11,7 @@ import { EditIndividual } from "@/features/associated-entities/EditIndividual";
 import { EditCorporate } from "@/features/associated-entities/EditCorporate";
 import { MakeShareholder } from "@/features/associated-entities/MakeShareholder";
 import { MakeUser } from "@/features/associated-entities/MakeUser";
+import { IndirectShareholdingDialog } from "@/features/associated-entities/IndirectShareholdingDialog";
 import type {
   AssociatedEntity,
   CorporateAssociatedEntity,
@@ -22,6 +23,19 @@ import type {
 const isIndividualEntity = (
   entity: AssociatedEntity
 ): entity is IndividualAssociatedEntity => "firstName" in entity;
+
+const isCorporateEntity = (
+  entity: AssociatedEntity
+): entity is CorporateAssociatedEntity => "name" in entity;
+
+const getEntityLabel = (entity?: AssociatedEntity) => {
+  if (!entity) {
+    return "";
+  }
+  return isIndividualEntity(entity)
+    ? `${entity.firstName} ${entity.lastName}`
+    : entity.name;
+};
 
 const appendAffiliation = (
   entity: IndividualAssociatedEntity,
@@ -43,6 +57,10 @@ export default function AssociatedEntitiesPage() {
   const [activeDialog, setActiveDialog] = React.useState<{
     type: DialogType;
     section: string;
+    prefillIndirectShareholdings?: Array<{
+      parentId: string;
+      shareholding?: string;
+    }>;
   } | null>(null);
   const [editingIndividual, setEditingIndividual] =
     React.useState<IndividualAssociatedEntity | null>(null);
@@ -52,9 +70,27 @@ export default function AssociatedEntitiesPage() {
     React.useState<IndividualAssociatedEntity | null>(null);
   const [userTarget, setUserTarget] =
     React.useState<IndividualAssociatedEntity | null>(null);
+  const [indirectLink, setIndirectLink] = React.useState<{
+    ownerId: string;
+    parentId: string;
+  } | null>(null);
 
-  const openDialog = (type: DialogType, section: string) => {
-    setActiveDialog({ type, section });
+  React.useEffect(() => {
+    console.log(associatedEntities);
+  });
+
+
+  const openDialog = (
+    type: DialogType,
+    section: string,
+    options?: {
+      prefillIndirectShareholdings?: Array<{
+        parentId: string;
+        shareholding?: string;
+      }>;
+    }
+  ) => {
+    setActiveDialog({ type, section, ...options });
   };
 
   const handleDialogChange = (open: boolean) => {
@@ -111,6 +147,47 @@ export default function AssociatedEntitiesPage() {
     }
   };
 
+  const handleAddOwnerFromStructure = (
+    parentId: string | null,
+    type: DialogType
+  ) => {
+    if (parentId) {
+      openDialog(type, "Shareholders", {
+        prefillIndirectShareholdings: [{ parentId }],
+      });
+    } else {
+      openDialog(type, "Shareholders");
+    }
+  };
+
+  const handleLinkExistingOwner = (parentId: string, ownerId: string) => {
+    setIndirectLink({ parentId, ownerId });
+  };
+
+  const handleIndirectLinkSubmit = (shareholding: number) => {
+    if (!indirectLink) {
+      return;
+    }
+    setAssociatedEntities((prev) =>
+      prev.map((entity) =>
+        entity.id === indirectLink.ownerId
+          ? {
+              ...entity,
+              affiliation: [
+                ...entity.affiliation,
+                {
+                  type: "INDIRECT_SHAREHOLDER",
+                  parentEntity: indirectLink.parentId,
+                  shareholding,
+                },
+              ],
+            }
+          : entity
+      )
+    );
+    setIndirectLink(null);
+  };
+
   const handleMakeShareholder = (shareholding: number) => {
     if (!shareholderTarget) {
       return;
@@ -155,9 +232,25 @@ export default function AssociatedEntitiesPage() {
       !entity.affiliation.some(({ type }) => type === "SHAREHOLDER")
   );
 
-  const shareholderEntities = associatedEntities.filter((entity) =>
-    entity.affiliation.some(({ type }) => type === "SHAREHOLDER")
-  );
+  const corporateEntities = associatedEntities.filter(isCorporateEntity);
+
+  const handleRemoveAffiliation = (
+    entityId: string,
+    affiliation: EntitySectionAffiliation
+  ) => {
+    setAssociatedEntities((prev) =>
+      prev.map((entity) =>
+        entity.id === entityId
+          ? {
+              ...entity,
+              affiliation: entity.affiliation.filter(
+                (aff) => aff.type !== affiliation
+              ),
+            }
+          : entity
+      )
+    );
+  };
 
   return (
     <main className="mx-auto flex max-w-4xl flex-col gap-8 px-6 py-16">
@@ -181,16 +274,20 @@ export default function AssociatedEntitiesPage() {
             onOpenDialog={openDialog}
             onSelectExisting={handleExistingSelection}
             onCardClick={handleCardClick}
+            onRemoveAffiliation={(entity, affiliation) =>
+              handleRemoveAffiliation(entity.id, affiliation)
+            }
           />
         </TabsContent>
         <TabsContent value="structure">
           <ShareholderStructure
-            onOpenDialog={openDialog}
-            availableIndividuals={shareholderAvailableIndividuals as IndividualAssociatedEntity[]}
-            shareholders={shareholderEntities}
-            onSelectExisting={(individual) =>
-              handleExistingSelection(individual, "SHAREHOLDER")
-            }
+            onAddOwner={handleAddOwnerFromStructure}
+            existingEntities={associatedEntities}
+            onLinkExisting={(parentId, ownerId) => {
+              if (parentId !== "root") {
+                handleLinkExistingOwner(parentId, ownerId);
+              }
+            }}
           />
         </TabsContent>
       </Tabs>
@@ -200,12 +297,18 @@ export default function AssociatedEntitiesPage() {
         onOpenChange={handleDialogChange}
         section={activeDialog?.section ?? ""}
         onSubmit={handleAddIndividual}
+        enableIndirectShareholding
+        corporateOptions={corporateEntities}
+        prefillIndirectShareholdings={activeDialog?.prefillIndirectShareholdings}
       />
       <AddCorporate
         open={activeDialog?.type === "corporate"}
         onOpenChange={handleDialogChange}
         section={activeDialog?.section ?? ""}
         onSubmit={handleAddCorporate}
+        enableIndirectShareholding
+        corporateOptions={corporateEntities}
+        prefillIndirectShareholdings={activeDialog?.prefillIndirectShareholdings}
       />
       <EditIndividual
         open={Boolean(editingIndividual)}
@@ -219,6 +322,8 @@ export default function AssociatedEntitiesPage() {
           handleUpdateIndividual(entity);
           setEditingIndividual(null);
         }}
+        enableIndirectShareholding
+        corporateOptions={corporateEntities}
       />
       <EditCorporate
         open={Boolean(editingCorporate)}
@@ -232,6 +337,8 @@ export default function AssociatedEntitiesPage() {
           handleUpdateCorporate(entity);
           setEditingCorporate(null);
         }}
+        enableIndirectShareholding
+        corporateOptions={corporateEntities}
       />
       <MakeShareholder
         open={Boolean(shareholderTarget)}
@@ -252,6 +359,35 @@ export default function AssociatedEntitiesPage() {
           }
         }}
         onSubmit={handleMakeUser}
+      />
+      <IndirectShareholdingDialog
+        open={Boolean(indirectLink)}
+        ownerName={
+          indirectLink
+            ? getEntityLabel(
+                associatedEntities.find(
+                  (entity) => entity.id === indirectLink.ownerId
+                )
+              )
+            : ""
+        }
+        parentName={
+          indirectLink
+            ? indirectLink.parentId === "root"
+              ? "Starbugz"
+              : getEntityLabel(
+                  associatedEntities.find(
+                    (entity) => entity.id === indirectLink.parentId
+                  )
+                )
+            : ""
+        }
+        onOpenChange={(open) => {
+          if (!open) {
+            setIndirectLink(null);
+          }
+        }}
+        onSubmit={handleIndirectLinkSubmit}
       />
 
       <p className="text-sm text-gray-500">

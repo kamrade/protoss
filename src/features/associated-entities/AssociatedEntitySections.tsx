@@ -25,6 +25,10 @@ interface AssociatedEntitySectionsProps {
     affiliation: EntitySectionAffiliation
   ) => void;
   onCardClick: (entity: AssociatedEntity) => void;
+  onRemoveAffiliation?: (
+    entity: AssociatedEntity,
+    affiliation: EntitySectionAffiliation
+  ) => void;
 }
 
 const isIndividual = (
@@ -36,6 +40,7 @@ export function AssociatedEntitySections({
   onOpenDialog,
   onSelectExisting,
   onCardClick,
+  onRemoveAffiliation,
 }: AssociatedEntitySectionsProps) {
   return (
     <div className="flex flex-col gap-4">
@@ -118,6 +123,11 @@ export function AssociatedEntitySections({
                     entity={entity}
                     showShareholding={affiliation === "SHAREHOLDER"}
                     onClick={() => onCardClick(entity)}
+                    onRemove={
+                      onRemoveAffiliation
+                        ? () => onRemoveAffiliation(entity, affiliation)
+                        : undefined
+                    }
                   />
                 ))
               )}
