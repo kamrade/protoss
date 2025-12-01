@@ -1,6 +1,7 @@
 import { ButtonShowcase } from "./ButtonShowcase";
-import { IconButtonShowcase } from "./IconButtonShowcase";
 import { DropdownMenuShowcase } from "./DropdownMenuShowcase";
+import { IconButtonShowcase } from "./IconButtonShowcase";
+import { TextFieldShowcase } from "./TextFieldShowcase";
 
 export default function ShowcasePage() {
   return (
@@ -19,6 +20,7 @@ export default function ShowcasePage() {
       </header>
       <ButtonShowcase />
       <IconButtonShowcase />
+      <TextFieldShowcase />
       <DropdownMenuShowcase />
     </main>
   );
