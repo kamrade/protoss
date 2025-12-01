@@ -1,4 +1,5 @@
 export type DialogType = "individual" | "corporate";
+export type EntitySectionAffiliation = "SHAREHOLDER" | "DIRECTOR" | "AUTHORISED_SIGNATORY" | "USER";
 
 export type AffiliationType =
   'WALLET_SIGNATORY'
@@ -52,4 +53,3 @@ export interface CorporateAssociatedEntity  extends BaseEntity {
 
 
 export type AssociatedEntity = CorporateAssociatedEntity | IndividualAssociatedEntity;
-

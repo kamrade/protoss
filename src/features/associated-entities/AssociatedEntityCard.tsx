@@ -1,3 +1,5 @@
+import Building2LineIcon from "remixicon-react/Building2LineIcon";
+import UserLineIcon from "remixicon-react/UserLineIcon";
 import type {
   AssociatedEntity,
   IndividualAssociatedEntity,
@@ -11,13 +13,18 @@ interface AssociatedEntityCardProps {
   entity: AssociatedEntity;
   className?: string;
   onClick?: () => void;
+  showShareholding?: boolean;
 }
 
 export function AssociatedEntityCard({
   entity,
   className = "",
   onClick,
+  showShareholding = false,
 }: AssociatedEntityCardProps) {
+  const shareholding = entity.affiliation.find(
+    ({ type }) => type === "SHAREHOLDER"
+  )?.shareholding;
   const baseClasses =
     "rounded-2xl border border-gray-100 bg-gray-50 px-4 py-3";
   const interactiveClasses = onClick
@@ -30,12 +37,22 @@ export function AssociatedEntityCard({
         onClick={onClick}
         className={`${baseClasses} ${interactiveClasses} ${className}`}
       >
-        <p className="text-sm font-semibold text-gray-900">
-          {entity.firstName} {entity.lastName}
-        </p>
-        <p className="text-xs uppercase tracking-[0.2em] text-gray-500">
-          Individual
-        </p>
+        <div className="flex items-center gap-3">
+          <span className="rounded-full bg-gray-900/5 p-2 text-gray-900">
+            <UserLineIcon className="h-4 w-4" />
+          </span>
+          <p className="text-sm font-semibold text-gray-900">
+            {entity.firstName} {entity.lastName}
+          </p>
+        </div>
+        {showShareholding && typeof shareholding === "number" && (
+          <p className="mt-2 text-xs text-gray-600">
+            Direct shareholding:{" "}
+            <span>
+              {shareholding}%
+            </span>
+          </p>
+        )}
       </div>
     );
   }
@@ -45,10 +62,20 @@ export function AssociatedEntityCard({
       onClick={onClick}
       className={`${baseClasses} ${interactiveClasses} ${className}`}
     >
-      <p className="text-sm font-semibold text-gray-900">{entity.name}</p>
-      <p className="text-xs uppercase tracking-[0.2em] text-gray-500">
-        Corporate
-      </p>
+      <div className="flex items-center gap-3">
+        <span className="rounded-full bg-gray-900/5 p-2 text-gray-900">
+          <Building2LineIcon className="h-4 w-4" />
+        </span>
+        <p className="text-sm font-semibold text-gray-900">{entity.name}</p>
+      </div>
+      {showShareholding && typeof shareholding === "number" && (
+        <p className="mt-2 text-xs text-gray-600">
+          Direct shareholding:{" "}
+          <span>
+            {shareholding}%
+          </span>
+        </p>
+      )}
     </div>
   );
 }

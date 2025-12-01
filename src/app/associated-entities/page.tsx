@@ -8,6 +8,7 @@ import {
   DropdownMenuContent,
   DropdownMenuItem,
   DropdownMenuTrigger,
+  DropdownMenuSeparator,
 } from "@/components/DropdownMenu";
 import { PlusIcon } from "@radix-ui/react-icons";
 import { AddCorporate } from "@/features/associated-entities/AddCorporate";
@@ -15,12 +16,15 @@ import { AddIndividual } from "@/features/associated-entities/AddIndividual";
 import { AssociatedEntityCard } from "@/features/associated-entities/AssociatedEntityCard";
 import { EditIndividual } from "@/features/associated-entities/EditIndividual";
 import { EditCorporate } from "@/features/associated-entities/EditCorporate";
+import { MakeShareholder } from "@/features/associated-entities/MakeShareholder";
+import { MakeUser } from "@/features/associated-entities/MakeUser";
 
 import type {
   AssociatedEntity,
   CorporateAssociatedEntity,
   IndividualAssociatedEntity,
-  DialogType
+  DialogType,
+  EntitySectionAffiliation,
 } from "@/types";
 
 import { entitySections } from "@/const";
@@ -28,6 +32,20 @@ import { entitySections } from "@/const";
 const isIndividualEntity = (
   entity: AssociatedEntity
 ): entity is IndividualAssociatedEntity => "firstName" in entity;
+
+const appendAffiliation = (
+  entity: IndividualAssociatedEntity,
+  affiliation: EntitySectionAffiliation,
+  extras?: Partial<{ shareholding?: number }>
+) => {
+  if (entity.affiliation.some(({ type }) => type === affiliation)) {
+    return entity;
+  }
+  return {
+    ...entity,
+    affiliation: [...entity.affiliation, { type: affiliation, ...extras }],
+  };
+};
 
 export default function AssociatedEntitiesPage() {
   const [associatedEntities, setAssociatedEntities] = React.useState<AssociatedEntity[]>([]);
@@ -39,6 +57,10 @@ export default function AssociatedEntitiesPage() {
     React.useState<IndividualAssociatedEntity | null>(null);
   const [editingCorporate, setEditingCorporate] =
     React.useState<CorporateAssociatedEntity | null>(null);
+  const [shareholderTarget, setShareholderTarget] =
+    React.useState<IndividualAssociatedEntity | null>(null);
+  const [userTarget, setUserTarget] =
+    React.useState<IndividualAssociatedEntity | null>(null);
 
   const openDialog = (type: DialogType, section: string) => {
     setActiveDialog({ type, section });
@@ -70,6 +92,44 @@ export default function AssociatedEntitiesPage() {
     );
   };
 
+  const assignAffiliation = (
+    entity: IndividualAssociatedEntity,
+    affiliation: EntitySectionAffiliation
+  ) => {
+    const updated = appendAffiliation(entity, affiliation);
+    handleUpdateIndividual(updated);
+  };
+
+  const handleMakeShareholder = (shareholding: number) => {
+    if (!shareholderTarget) {
+      return;
+    }
+    const updated = appendAffiliation(shareholderTarget, "SHAREHOLDER", {
+      shareholding,
+    });
+    handleUpdateIndividual(updated);
+    setShareholderTarget(null);
+  };
+
+  const handleMakeUser = ({
+    mobileNumber,
+    accessRights,
+  }: {
+    mobileNumber: string;
+    accessRights: string;
+  }) => {
+    if (!userTarget) {
+      return;
+    }
+    const updated = appendAffiliation(userTarget, "USER");
+    handleUpdateIndividual({
+      ...updated,
+      mobileNumber,
+      accessRights,
+    });
+    setUserTarget(null);
+  };
+
   return (
     <main className="mx-auto flex max-w-4xl flex-col gap-8 px-6 py-16">
       <header className="flex flex-col gap-2">
@@ -86,6 +146,21 @@ export default function AssociatedEntitiesPage() {
           const sectionEntities = associatedEntities.filter((entity) =>
             entity.affiliation.some(({ type }) => type === affiliation)
           );
+          const availableIndividuals = associatedEntities.filter(
+            (entity) =>
+              isIndividualEntity(entity) &&
+              !entity.affiliation.some(({ type }) => type === affiliation)
+          );
+
+          const totalShareholding =
+            affiliation === "SHAREHOLDER"
+              ? sectionEntities.reduce((sum, entity) => {
+                  const share = entity.affiliation.find(
+                    ({ type }) => type === "SHAREHOLDER"
+                  )?.shareholding;
+                  return sum + (typeof share === "number" ? share : 0);
+                }, 0)
+              : null;
 
           return (
             <section
@@ -109,6 +184,35 @@ export default function AssociatedEntitiesPage() {
                       {label}
                     </DropdownMenuItem>
                   ))}
+                  {availableIndividuals.length > 0 && (
+                    <>
+                      <DropdownMenuSeparator />
+                      {availableIndividuals.map((individual) => (
+                        <DropdownMenuItem
+                          key={`existing-${individual.id}`}
+                          onSelect={(event) => {
+                            event.preventDefault();
+                            switch (affiliation) {
+                              case "SHAREHOLDER":
+                                setShareholderTarget(individual);
+                                break;
+                              case "USER":
+                                setUserTarget(individual);
+                                break;
+                              case "DIRECTOR":
+                              case "AUTHORISED_SIGNATORY":
+                                assignAffiliation(individual, affiliation);
+                                break;
+                              default:
+                                break;
+                            }
+                          }}
+                        >
+                          Add {individual.firstName} {individual.lastName}
+                        </DropdownMenuItem>
+                      ))}
+                    </>
+                  )}
                 </DropdownMenuContent>
               </DropdownMenu>
             </div>
@@ -122,6 +226,7 @@ export default function AssociatedEntitiesPage() {
                   <AssociatedEntityCard
                     key={`${title}-${entity.id}`}
                     entity={entity}
+                    showShareholding={affiliation === "SHAREHOLDER"}
                     onClick={() => {
                       if (isIndividualEntity(entity)) {
                         setEditingIndividual(entity);
@@ -133,6 +238,27 @@ export default function AssociatedEntitiesPage() {
                 ))
               )}
             </div>
+            {affiliation === "SHAREHOLDER" && (
+              <div className="mt-4 rounded-2xl border border-gray-100 bg-gray-50 px-4 py-3">
+                <p className="text-sm font-semibold text-gray-900">
+                  Total shareholding:{" "}
+                  <span
+                    className={
+                      totalShareholding && totalShareholding > 100
+                        ? "text-red-600"
+                        : "text-gray-900"
+                    }
+                  >
+                    {totalShareholding?.toFixed(2) ?? "0.00"}%
+                  </span>
+                </p>
+                {totalShareholding && totalShareholding > 100 && (
+                  <p className="mt-1 text-xs text-red-600">
+                    Aggregate direct ownership cannot exceed 100%.
+                  </p>
+                )}
+              </div>
+            )}
           </section>
         );
         })}
@@ -176,6 +302,26 @@ export default function AssociatedEntitiesPage() {
           handleUpdateCorporate(entity);
           setEditingCorporate(null);
         }}
+      />
+      <MakeShareholder
+        open={Boolean(shareholderTarget)}
+        entity={shareholderTarget}
+        onOpenChange={(open) => {
+          if (!open) {
+            setShareholderTarget(null);
+          }
+        }}
+        onSubmit={handleMakeShareholder}
+      />
+      <MakeUser
+        open={Boolean(userTarget)}
+        entity={userTarget}
+        onOpenChange={(open) => {
+          if (!open) {
+            setUserTarget(null);
+          }
+        }}
+        onSubmit={handleMakeUser}
       />
 
       <p className="text-sm text-gray-500">
