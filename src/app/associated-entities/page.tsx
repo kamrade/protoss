@@ -13,6 +13,8 @@ import { PlusIcon } from "@radix-ui/react-icons";
 import { AddCorporate } from "@/features/associated-entities/AddCorporate";
 import { AddIndividual } from "@/features/associated-entities/AddIndividual";
 import { AssociatedEntityCard } from "@/features/associated-entities/AssociatedEntityCard";
+import { EditIndividual } from "@/features/associated-entities/EditIndividual";
+import { EditCorporate } from "@/features/associated-entities/EditCorporate";
 
 import type {
   AssociatedEntity,
@@ -21,7 +23,11 @@ import type {
   DialogType
 } from "@/types";
 
-import { entitySections } from '@/const';
+import { entitySections } from "@/const";
+
+const isIndividualEntity = (
+  entity: AssociatedEntity
+): entity is IndividualAssociatedEntity => "firstName" in entity;
 
 export default function AssociatedEntitiesPage() {
   const [associatedEntities, setAssociatedEntities] = React.useState<AssociatedEntity[]>([]);
@@ -29,6 +35,10 @@ export default function AssociatedEntitiesPage() {
     type: DialogType;
     section: string;
   } | null>(null);
+  const [editingIndividual, setEditingIndividual] =
+    React.useState<IndividualAssociatedEntity | null>(null);
+  const [editingCorporate, setEditingCorporate] =
+    React.useState<CorporateAssociatedEntity | null>(null);
 
   const openDialog = (type: DialogType, section: string) => {
     setActiveDialog({ type, section });
@@ -46,6 +56,18 @@ export default function AssociatedEntitiesPage() {
 
   const handleAddCorporate = (entity: CorporateAssociatedEntity) => {
     setAssociatedEntities((prev) => [...prev, entity]);
+  };
+
+  const handleUpdateIndividual = (updated: IndividualAssociatedEntity) => {
+    setAssociatedEntities((prev) =>
+      prev.map((entity) => (entity.id === updated.id ? updated : entity))
+    );
+  };
+
+  const handleUpdateCorporate = (updated: CorporateAssociatedEntity) => {
+    setAssociatedEntities((prev) =>
+      prev.map((entity) => (entity.id === updated.id ? updated : entity))
+    );
   };
 
   return (
@@ -100,6 +122,13 @@ export default function AssociatedEntitiesPage() {
                   <AssociatedEntityCard
                     key={`${title}-${entity.id}`}
                     entity={entity}
+                    onClick={() => {
+                      if (isIndividualEntity(entity)) {
+                        setEditingIndividual(entity);
+                      } else {
+                        setEditingCorporate(entity);
+                      }
+                    }}
                   />
                 ))
               )}
@@ -120,6 +149,33 @@ export default function AssociatedEntitiesPage() {
         onOpenChange={handleDialogChange}
         section={activeDialog?.section ?? ""}
         onSubmit={handleAddCorporate}
+      />
+
+      <EditIndividual
+        open={Boolean(editingIndividual)}
+        entity={editingIndividual}
+        onOpenChange={(open) => {
+          if (!open) {
+            setEditingIndividual(null);
+          }
+        }}
+        onSubmit={(entity) => {
+          handleUpdateIndividual(entity);
+          setEditingIndividual(null);
+        }}
+      />
+      <EditCorporate
+        open={Boolean(editingCorporate)}
+        entity={editingCorporate}
+        onOpenChange={(open) => {
+          if (!open) {
+            setEditingCorporate(null);
+          }
+        }}
+        onSubmit={(entity) => {
+          handleUpdateCorporate(entity);
+          setEditingCorporate(null);
+        }}
       />
 
       <p className="text-sm text-gray-500">
