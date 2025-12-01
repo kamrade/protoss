@@ -17,7 +17,7 @@ const stateExamples = [
   {
     label: "Invite link",
     description: "Share-only link, not editable.",
-    value: "https://app.protoss.com/invite/team-alpha",
+    defaultValue: "https://app.protoss.com/invite/team-alpha",
     disabled: true,
     leadingVisual: <Link2Icon className="h-4 w-4" />,
   },
@@ -33,14 +33,14 @@ const intentExamples = [
   {
     label: "Owner",
     description: "Synced from the CRM record.",
-    value: "miran.jiang@acme.com",
+    defaultValue: "miran.jiang@acme.com",
     intent: "success",
     leadingVisual: <PersonIcon className="h-4 w-4" />,
   },
   {
     label: "Seats remaining",
     description: "Higher tiers unlock more seats.",
-    value: "2 of 5",
+    defaultValue: "2 of 5",
     intent: "warning",
     trailingVisual: "Upgrade",
   },
