@@ -6,6 +6,7 @@ import { SelectShowcase } from "./SelectShowcase";
 import { DialogShowcase } from "./DialogShowcase";
 import { DatePickerShowcase } from "./DatePickerShowcase";
 import { CheckboxShowcase } from "./CheckboxShowcase";
+import { TabsShowcase } from "./TabsShowcase";
 
 export default function ShowcasePage() {
   return (
@@ -28,6 +29,7 @@ export default function ShowcasePage() {
       <SelectShowcase />
       <DatePickerShowcase />
       <CheckboxShowcase />
+      <TabsShowcase />
       <DropdownMenuShowcase />
       <DialogShowcase />
     </main>

@@ -18,6 +18,7 @@ import { EditIndividual } from "@/features/associated-entities/EditIndividual";
 import { EditCorporate } from "@/features/associated-entities/EditCorporate";
 import { MakeShareholder } from "@/features/associated-entities/MakeShareholder";
 import { MakeUser } from "@/features/associated-entities/MakeUser";
+import { ShareholdingTotal } from "@/features/associated-entities/ShareholdingTotal";
 
 import type {
   AssociatedEntity,
@@ -194,21 +195,23 @@ export default function AssociatedEntitiesPage() {
                             event.preventDefault();
                             switch (affiliation) {
                               case "SHAREHOLDER":
-                                setShareholderTarget(individual);
+                                setShareholderTarget(individual  as IndividualAssociatedEntity);
                                 break;
                               case "USER":
-                                setUserTarget(individual);
+                                setUserTarget(individual  as IndividualAssociatedEntity);
                                 break;
                               case "DIRECTOR":
                               case "AUTHORISED_SIGNATORY":
-                                assignAffiliation(individual, affiliation);
+                                assignAffiliation(individual as IndividualAssociatedEntity, affiliation);
                                 break;
                               default:
                                 break;
                             }
                           }}
                         >
-                          Add {individual.firstName} {individual.lastName}
+                          Add 
+                          {(individual  as IndividualAssociatedEntity).firstName} 
+                          {(individual  as IndividualAssociatedEntity).lastName}
                         </DropdownMenuItem>
                       ))}
                     </>
@@ -238,26 +241,8 @@ export default function AssociatedEntitiesPage() {
                 ))
               )}
             </div>
-            {affiliation === "SHAREHOLDER" && (
-              <div className="mt-4 rounded-2xl border border-gray-100 bg-gray-50 px-4 py-3">
-                <p className="text-sm font-semibold text-gray-900">
-                  Total shareholding:{" "}
-                  <span
-                    className={
-                      totalShareholding && totalShareholding > 100
-                        ? "text-red-600"
-                        : "text-gray-900"
-                    }
-                  >
-                    {totalShareholding?.toFixed(2) ?? "0.00"}%
-                  </span>
-                </p>
-                {totalShareholding && totalShareholding > 100 && (
-                  <p className="mt-1 text-xs text-red-600">
-                    Aggregate direct ownership cannot exceed 100%.
-                  </p>
-                )}
-              </div>
+            {affiliation === "SHAREHOLDER" && totalShareholding !== null && (
+              <ShareholdingTotal value={totalShareholding} />
             )}
           </section>
         );
