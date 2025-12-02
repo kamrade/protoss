@@ -75,6 +75,8 @@ interface FormState {
   accessRights: string;
   shareholdingPercent: string;
   roles: Record<RoleId, boolean>;
+  indirectShareholdings: Array<{ parentId: string; shareholding: string }>;
+  indirectShareholdingEnabled: boolean;
 }
 
 const deriveRolesFromEntity = (
@@ -118,31 +120,36 @@ const getShareholdingPercent = (entity: IndividualAssociatedEntity | null) => {
     : "";
 };
 
-const createFormState = (entity: IndividualAssociatedEntity | null): FormState => ({
-  firstName: entity?.firstName ?? "",
-  middleName: entity?.middleName ?? "",
-  lastName: entity?.lastName ?? "",
-  dateOfBirth: entity?.dateOfBirth ? new Date(entity.dateOfBirth) : null,
-  placeOfBirth: entity?.placeOfBirth ?? "",
-  nationality: entity?.nationality ?? "",
-  idNumber: entity?.idNumber ?? "",
-  address: entity?.address ?? "",
-  city: entity?.city ?? "",
-  country: entity?.country ?? "",
-  postcode: entity?.postcode ?? "",
-  email: entity?.email ?? "",
-  mobileNumber: entity?.mobileNumber ?? "",
-  accessRights: entity?.accessRights ?? "",
-  shareholdingPercent: getShareholdingPercent(entity),
-  roles: deriveRolesFromEntity(entity),
-  indirectShareholdings:
+const createFormState = (entity: IndividualAssociatedEntity | null): FormState => {
+  const indirectShareholdings =
     entity?.affiliation
       .filter((aff) => aff.type === "INDIRECT_SHAREHOLDER")
       .map((aff) => ({
         parentId: aff.parentEntity ?? "",
         shareholding: aff.shareholding?.toString() ?? "",
-      })) ?? [],
-});
+      })) ?? [];
+
+  return {
+    firstName: entity?.firstName ?? "",
+    middleName: entity?.middleName ?? "",
+    lastName: entity?.lastName ?? "",
+    dateOfBirth: entity?.dateOfBirth ? new Date(entity.dateOfBirth) : null,
+    placeOfBirth: entity?.placeOfBirth ?? "",
+    nationality: entity?.nationality ?? "",
+    idNumber: entity?.idNumber ?? "",
+    address: entity?.address ?? "",
+    city: entity?.city ?? "",
+    country: entity?.country ?? "",
+    postcode: entity?.postcode ?? "",
+    email: entity?.email ?? "",
+    mobileNumber: entity?.mobileNumber ?? "",
+    accessRights: entity?.accessRights ?? "",
+    shareholdingPercent: getShareholdingPercent(entity),
+    roles: deriveRolesFromEntity(entity),
+    indirectShareholdings,
+    indirectShareholdingEnabled: indirectShareholdings.length > 0,
+  };
+};
 
 export function EditIndividual({
   open,
@@ -223,7 +230,9 @@ export function EditIndividual({
     }));
 
     const indirectAffiliations =
-      enableIndirectShareholding && form.indirectShareholdings.length > 0
+      enableIndirectShareholding &&
+      form.indirectShareholdingEnabled &&
+      form.indirectShareholdings.length > 0
         ? form.indirectShareholdings
             .filter((entry) => entry.parentId && entry.shareholding)
             .map((entry) => ({
@@ -405,83 +414,94 @@ export function EditIndividual({
 
           {enableIndirectShareholding && (
             <div className="space-y-3">
-              <div className="flex items-center justify-between">
-                <p className="text-xs font-semibold uppercase tracking-[0.25em] text-gray-500">
-                  Indirect shareholding
-                </p>
-                <button
-                  type="button"
-                  className="text-xs font-semibold text-gray-900 disabled:text-gray-300"
-                  onClick={addIndirectShareholding}
-                  disabled={corporateOptions.length === 0}
-                >
-                  Add block
-                </button>
-              </div>
-              {form.indirectShareholdings.length === 0 ? (
-                <button
-                  type="button"
-                  className="rounded-xl border border-dashed border-gray-300 py-3 text-sm text-gray-500 disabled:text-gray-300"
-                  onClick={addIndirectShareholding}
-                  disabled={corporateOptions.length === 0}
-                >
-                  Add indirect shareholding
-                </button>
-              ) : (
-                form.indirectShareholdings.map((entry, index) => (
-                  <div
-                    key={`indirect-${index}`}
-                    className="rounded-2xl border border-gray-100 p-4"
-                  >
-                    <div className="grid gap-3 md:grid-cols-2">
-                      <div>
-                        <p className="text-xs font-semibold uppercase tracking-[0.25em] text-gray-500">
-                          Parent entity
-                        </p>
-                        <div className="mt-2">
-                          <Select
-                            value={entry.parentId || undefined}
-                            onValueChange={(value) =>
-                              updateIndirectShareholding(index, "parentId", value)
-                            }
-                          >
-                            <SelectTrigger>
-                              <SelectValue placeholder="Select corporate" />
-                            </SelectTrigger>
-                            <SelectContent>
-                              {corporateOptions
-                                .filter((corp) => corp.id !== entity.id)
-                                .map((corp) => (
-                                  <SelectItem key={corp.id} value={corp.id}>
-                                    {corp.name}
-                                  </SelectItem>
-                                ))}
-                            </SelectContent>
-                          </Select>
-                        </div>
-                      </div>
-                      <TextField
-                        label="% Shareholding"
-                        type="number"
-                        value={entry.shareholding}
-                        onChange={(event) =>
-                          updateIndirectShareholding(
-                            index,
-                            "shareholding",
-                            event.target.value
-                          )
-                        }
-                      />
-                    </div>
+              <Checkbox
+                label="Indirect shareholding"
+                checked={form.indirectShareholdingEnabled}
+                onCheckedChange={(value) =>
+                  setForm((prev) => ({
+                    ...prev,
+                    indirectShareholdingEnabled: Boolean(value),
+                  }))
+                }
+              />
+              {form.indirectShareholdingEnabled && (
+                <div className="space-y-3">
+                  {form.indirectShareholdings.length === 0 ? (
                     <button
                       type="button"
-                      className="mt-3 text-xs text-gray-500"
-                      onClick={() => removeIndirectShareholding(index)}
+                      className="rounded-xl border border-dashed border-gray-300 py-3 px-4 text-sm text-gray-500 disabled:text-gray-300"
+                      onClick={addIndirectShareholding}
+                      disabled={corporateOptions.length === 0}
                     >
-                      Remove
+                      Add indirect shareholding
                     </button>
-                  </div>
-                ))
+                  ) : (
+                    <>
+                      {form.indirectShareholdings.map((entry, index) => (
+                        <div
+                          key={`indirect-${index}`}
+                          className="rounded-2xl border border-gray-100 p-4"
+                        >
+                          <div className="grid gap-3 md:grid-cols-2">
+                            <div>
+                              <p className="text-xs font-semibold uppercase tracking-[0.25em] text-gray-500">
+                                Parent entity
+                              </p>
+                              <div className="mt-2">
+                                <Select
+                                  value={entry.parentId || undefined}
+                                  onValueChange={(value) =>
+                                    updateIndirectShareholding(index, "parentId", value)
+                                  }
+                                >
+                                  <SelectTrigger>
+                                    <SelectValue placeholder="Select corporate" />
+                                  </SelectTrigger>
+                                  <SelectContent>
+                                    {corporateOptions
+                                      .filter((corp) => corp.id !== entity.id)
+                                      .map((corp) => (
+                                        <SelectItem key={corp.id} value={corp.id}>
+                                          {corp.name}
+                                        </SelectItem>
+                                      ))}
+                                  </SelectContent>
+                                </Select>
+                              </div>
+                            </div>
+                            <TextField
+                              label="% Shareholding"
+                              type="number"
+                              value={entry.shareholding}
+                              onChange={(event) =>
+                                updateIndirectShareholding(
+                                  index,
+                                  "shareholding",
+                                  event.target.value
+                                )
+                              }
+                            />
+                          </div>
+                          <button
+                            type="button"
+                            className="mt-3 text-xs text-gray-500"
+                            onClick={() => removeIndirectShareholding(index)}
+                          >
+                            Remove
+                          </button>
+                        </div>
+                      ))}
+                      <button
+                        type="button"
+                        className="rounded-xl border border-dashed border-gray-300 py-3 px-4 text-sm text-gray-500 disabled:text-gray-300"
+                        onClick={addIndirectShareholding}
+                        disabled={corporateOptions.length === 0}
+                      >
+                        Add indirect shareholding
+                      </button>
+                    </>
+                  )}
+                </div>
               )}
             </div>
           )}
