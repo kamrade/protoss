@@ -21,6 +21,12 @@ const starbugzEntity: CorporateAssociatedEntity = {
   dateOfIncorporation: "",
 };
 
+type TreeNode = {
+  entity: AssociatedEntity;
+  shareholding?: number;
+  depth: number;
+};
+
 export function ShareholderStructure({
   onAddOwner,
   existingEntities,
@@ -55,57 +61,76 @@ export function ShareholderStructure({
       });
   });
 
-  const renderNodes = (
-    nodes: Array<{ entity: AssociatedEntity; shareholding?: number }>
-  ) => {
-    if (!nodes.length) {
-      return null;
-    }
-    return (
-      <div className="ShareholderCardWrapper space-y-4 border-l border-gray-200 pl-6">
-        {nodes.map(({ entity, shareholding }) => (
-          <div key={`shareholder-node-${entity.id}`} className="space-y-2">
-            <ShareholderCard
-              entity={entity}
-              showShareholding
-              shareholdingOverride={shareholding}
-              ownerMenuEntities={existingEntities}
-              onAddOwner={(type) => onAddOwner(entity.id, type)}
-              onLinkExisting={(ownerId) => onLinkExisting(entity.id, ownerId)}
-            />
-            {renderNodes(indirectMap.get(entity.id) ?? [])}
-          </div>
-        ))}
-      </div>
+  const flattenTree = (
+    entity: AssociatedEntity,
+    depth: number,
+    shareholding?: number
+  ): TreeNode[] => {
+    const current: TreeNode = { entity, shareholding, depth };
+    const children = (indirectMap.get(entity.id) ?? []).flatMap((child) =>
+      flattenTree(child.entity, depth + 1, child.shareholding)
     );
+    return [current, ...children];
   };
 
+  const nodes = shareholders.flatMap((entity) =>
+    flattenTree(entity, 1, getDirectShareholding(entity))
+  );
+
   return (
-    <div className="ShareholderStructure rounded-2xl border border-gray-200 bg-white p-6 shadow-sm">
-      <div className="flex items-center justify-between">
-        <div>
+    <div className="rounded-2xl border border-gray-200 bg-white p-6 shadow-sm">
+      <div className="grid auto-cols-max gap-x-8 gap-y-4">
+        <div style={{ gridColumnStart: 1 }} className="relative pr-8">
+          {nodes.length > 0 && (
+            <span className="absolute right-0 top-1/2 h-px w-8 bg-gray-200" />
+          )}
           <ShareholderCard
             entity={starbugzEntity}
+            showShareholding={false}
             ownerMenuEntities={existingEntities}
             onAddOwner={(type) => onAddOwner(null, type)}
             onLinkExisting={(ownerId) => onLinkExisting("root", ownerId)}
           />
           <p className="mt-1 text-sm text-gray-600">Root entity</p>
         </div>
+        {nodes.length === 0 ? null : (
+          <>
+            {nodes.map(({ entity, shareholding, depth }) => (
+              <div
+                key={`shareholder-node-${entity.id}-${depth}`}
+                style={{ gridColumnStart: depth + 1 }}
+                className="relative pl-8"
+              >
+                {depth > 0 && (
+                  <>
+                    <span className="absolute left-0 top-1/2 h-px w-8 -translate-x-8 bg-gray-200" />
+                    <span className="absolute left-[-32px] top-0 h-full w-px bg-gray-200" />
+                  </>
+                )}
+                <ShareholderCard
+                  entity={entity}
+                  showShareholding
+                  shareholdingOverride={shareholding}
+                  ownerMenuEntities={existingEntities}
+                  onAddOwner={(type) => onAddOwner(entity.id, type)}
+                  onLinkExisting={(ownerId) =>
+                    onLinkExisting(entity.id, ownerId)
+                  }
+                />
+              </div>
+            ))}
+          </>
+        )}
       </div>
-      <p className="mt-2 text-xs text-gray-500">
+
+      <p className="mt-4 text-xs text-gray-500">
         Aggregate direct ownership:{" "}
         <span className="font-semibold text-gray-900">
           {totalShareholding.toFixed(2)}%
         </span>
       </p>
 
-      {renderNodes(
-        shareholders.map((entity) => ({
-          entity,
-          shareholding: getDirectShareholding(entity),
-        }))
-      ) ?? (
+      {nodes.length === 0 && (
         <p className="mt-6 text-sm text-gray-500">
           No direct shareholders yet. Use the Add owner action to attach the first
           record.
