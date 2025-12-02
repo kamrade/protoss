@@ -1,0 +1,20 @@
+.ShareholderStructure {
+  position: relative;
+  overflow-x: auto;
+}
+
+.ConnectorParent {
+  right: -16px;
+  width: 16px;
+}
+
+.ConnectorV {
+  left: -16px;
+  top: 50%;
+  height: calc(100% + 16px);
+}
+
+.ConnectorH {
+  left: 16px;
+  width: 16px;
+}

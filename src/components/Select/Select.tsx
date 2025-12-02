@@ -31,6 +31,9 @@ export const SelectTrigger = React.forwardRef<
 ));
 SelectTrigger.displayName = SelectPrimitive.Trigger.displayName;
 
+
+
+
 export const SelectValue = SelectPrimitive.Value;
 
 export const SelectContent = React.forwardRef<
@@ -61,6 +64,9 @@ export const SelectContent = React.forwardRef<
 ));
 SelectContent.displayName = SelectPrimitive.Content.displayName;
 
+
+
+
 export const SelectGroup = SelectPrimitive.Group;
 export const SelectLabel = React.forwardRef<
   React.ElementRef<typeof SelectPrimitive.Label>,
@@ -68,11 +74,14 @@ export const SelectLabel = React.forwardRef<
 >(({ className, ...props }, ref) => (
   <SelectPrimitive.Label
     ref={ref}
-    className={cn("px-2 py-1 text-xs font-semibold uppercase text-gray-400", className)}
+    className={cn("px-2 py-1 text-xs text-gray-400", className)}
     {...props}
   />
 ));
 SelectLabel.displayName = SelectPrimitive.Label.displayName;
+
+
+
 
 export const SelectItem = React.forwardRef<
   React.ElementRef<typeof SelectPrimitive.Item>,
@@ -96,6 +105,9 @@ export const SelectItem = React.forwardRef<
 ));
 SelectItem.displayName = SelectPrimitive.Item.displayName;
 
+
+
+
 export const SelectSeparator = React.forwardRef<
   React.ElementRef<typeof SelectPrimitive.Separator>,
   React.ComponentPropsWithoutRef<typeof SelectPrimitive.Separator>
@@ -106,4 +118,7 @@ export const SelectSeparator = React.forwardRef<
     {...props}
   />
 ));
+
+
+
 SelectSeparator.displayName = SelectPrimitive.Separator.displayName;

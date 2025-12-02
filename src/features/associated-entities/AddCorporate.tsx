@@ -187,7 +187,7 @@ export function AddCorporate({
               onChange={(event) => handleChange("registrationNumber", event.target.value)}
             />
             <div>
-              <p className="text-xs font-semibold uppercase tracking-[0.25em] text-gray-500">
+              <p className="text-xs text-gray-500">
                 Legal entity type
               </p>
               <div className="mt-2">

@@ -5,10 +5,10 @@ interface ShareholdingTotalProps {
 export function ShareholdingTotal({ value }: ShareholdingTotalProps) {
   const exceedsLimit = value > 100;
   return (
-    <div className="mt-4 rounded-2xl border border-gray-100 bg-gray-50 px-4 py-3">
-      <p className="text-sm font-semibold text-gray-900">
+    <div className="ShareholdingTotal uppercase text-gray-600 tracking-wider mt-8 border-t border-gray-200 py-4">
+      <p className="text-sm">
         Total shareholding:{" "}
-        <span className={exceedsLimit ? "text-red-600" : "text-gray-900"}>
+        <span className={exceedsLimit ? "text-red-600" : "text-gray-600"}>
           {value.toFixed(2)}%
         </span>
       </p>

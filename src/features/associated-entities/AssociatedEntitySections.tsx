@@ -68,7 +68,7 @@ export function AssociatedEntitySections({
         return (
           <section
             key={title}
-            className="rounded-2xl border border-gray-200 bg-white p-6 shadow-sm"
+            className="pb-6 mb-3 border-b border-gray-200"
           >
             <div className="flex items-center justify-between gap-4">
               <h2 className="text-xl font-semibold text-gray-900">{title}</h2>

@@ -286,7 +286,7 @@ export function EditIndividual({
               onChange={(event) => handleFieldChange("lastName", event.target.value)}
             />
             <div>
-              <p className="text-xs font-semibold uppercase tracking-[0.25em] text-gray-500">
+              <p className="text-xs text-gray-500">
                 Date of birth
               </p>
               <div className="mt-2">
@@ -304,7 +304,7 @@ export function EditIndividual({
               onChange={(event) => handleFieldChange("placeOfBirth", event.target.value)}
             />
             <div>
-              <p className="text-xs font-semibold uppercase tracking-[0.25em] text-gray-500">
+              <p className="text-xs text-gray-500">
                 Nationality
               </p>
               <div className="mt-2">
@@ -350,7 +350,7 @@ export function EditIndividual({
               onChange={(event) => handleFieldChange("city", event.target.value)}
             />
             <div>
-              <p className="text-xs font-semibold uppercase tracking-[0.25em] text-gray-500">
+              <p className="text-xs text-gray-500">
                 Country
               </p>
               <div className="mt-2">
@@ -494,7 +494,7 @@ export function EditIndividual({
                 onChange={(event) => handleFieldChange("mobileNumber", event.target.value)}
               />
               <div>
-                <p className="text-xs font-semibold uppercase tracking-[0.25em] text-gray-500">
+                <p className="text-xs text-gray-500">
                   Access rights
                 </p>
                 <div className="mt-2">

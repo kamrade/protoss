@@ -193,7 +193,7 @@ export function EditCorporate({
               onChange={(event) => handleChange("registrationNumber", event.target.value)}
             />
             <div>
-              <p className="text-xs font-semibold uppercase tracking-[0.25em] text-gray-500">
+              <p className="text-xs text-gray-500">
                 Legal entity type
               </p>
               <div className="mt-2">
@@ -270,7 +270,7 @@ export function EditCorporate({
                   >
                     <div className="grid gap-3 md:grid-cols-2">
                       <div>
-                        <p className="text-xs font-semibold uppercase tracking-[0.25em] text-gray-500">
+                        <p className="text-xs text-gray-500">
                           Parent entity
                         </p>
                         <div className="mt-2">

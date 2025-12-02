@@ -60,6 +60,8 @@ export function ShareholderCard({
     ? "transition hover:border-gray-200 hover:bg-gray-100 cursor-pointer"
     : "";
 
+
+
   const ownerMenu =
     onAddOwner && onLinkExisting ? (
       <DropdownMenu>
@@ -70,7 +72,7 @@ export function ShareholderCard({
         </DropdownMenuTrigger>
         <DropdownMenuContent align="end">
           {shareholderSection?.options.map(({ label, type }) => (
-            <DropdownMenuItem key={label} onSelect={() => onAddOwner(type)}>
+            <DropdownMenuItem key={label} onClick={(e) => e.stopPropagation()} onSelect={() => onAddOwner(type)}>
               {label}
             </DropdownMenuItem>
           ))}
@@ -86,6 +88,7 @@ export function ShareholderCard({
                       event.preventDefault();
                       onLinkExisting(candidate.id);
                     }}
+                    onClick={(e) => e.stopPropagation()}
                   >
                     Add {getEntityLabel(candidate)}
                   </DropdownMenuItem>
@@ -96,6 +99,11 @@ export function ShareholderCard({
       </DropdownMenu>
     ) : null;
 
+
+
+
+
+  // INDIVIDUAL
   if (isIndividualEntity(entity)) {
     return (
       <div
@@ -118,7 +126,7 @@ export function ShareholderCard({
             </p>
           )}
         </div>
-        {ownerMenu}
+        
       </div>
     );
   }
@@ -135,6 +143,7 @@ export function ShareholderCard({
           </span>
           <p className="text-sm font-semibold text-gray-900">{entity.name}</p>
         </div>
+        {ownerMenu}
         {showShareholding && typeof shareholding === "number" && (
           <p className="mt-2 text-xs text-gray-600">
             Direct shareholding:{" "}
@@ -142,7 +151,6 @@ export function ShareholderCard({
           </p>
         )}
       </div>
-      {ownerMenu}
     </div>
   );
 }

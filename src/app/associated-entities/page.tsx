@@ -288,6 +288,7 @@ export default function AssociatedEntitiesPage() {
                 handleLinkExistingOwner(parentId, ownerId);
               }
             }}
+            onCardClick={handleCardClick}
           />
         </TabsContent>
       </Tabs>

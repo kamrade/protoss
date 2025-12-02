@@ -78,7 +78,7 @@ export const TextField = React.forwardRef<HTMLInputElement, TextFieldProps>(
         {label && (
           <LabelPrimitive.Root
             htmlFor={inputId}
-            className="text-xs font-semibold uppercase tracking-[0.25em] text-gray-500"
+            className="text-xs text-gray-500"
           >
             {label}
           </LabelPrimitive.Root>

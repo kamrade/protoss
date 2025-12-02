@@ -1,10 +1,13 @@
 import type { AssociatedEntity, CorporateAssociatedEntity, DialogType } from "@/types";
 import { ShareholderCard } from "./ShareholderCard";
+import { ShareholdingTotal } from "./ShareholdingTotal";
+import './ShareholderStructure.css';
 
 interface ShareholderStructureProps {
   onAddOwner: (parentId: string | null, type: DialogType) => void;
   existingEntities: AssociatedEntity[];
   onLinkExisting: (parentId: string, ownerId: string) => void;
+  onCardClick?: (entity: AssociatedEntity) => void;
 }
 
 const getDirectShareholding = (entity: AssociatedEntity) =>
@@ -31,6 +34,7 @@ export function ShareholderStructure({
   onAddOwner,
   existingEntities,
   onLinkExisting,
+  onCardClick,
 }: ShareholderStructureProps) {
   const shareholders = existingEntities.filter((entity) =>
     entity.affiliation.some(({ type }) => type === "SHAREHOLDER")
@@ -78,11 +82,15 @@ export function ShareholderStructure({
   );
 
   return (
-    <div className="rounded-2xl border border-gray-200 bg-white p-6 shadow-sm">
-      <div className="grid auto-cols-max gap-x-8 gap-y-4">
-        <div style={{ gridColumnStart: 1 }} className="relative pr-8">
+    <div>
+      <div className="ShareholderStructure grid auto-cols-max gap-x-8 gap-y-4">
+        
+        
+        
+        {/* ROOT ENTITY */}
+        <div style={{ gridColumnStart: 1 }} className="relative">
           {nodes.length > 0 && (
-            <span className="absolute right-0 top-1/2 h-px w-8 bg-gray-200" />
+            <span className="ConnectorParent absolute top-1/2 h-px bg-gray-200" />
           )}
           <ShareholderCard
             entity={starbugzEntity}
@@ -91,20 +99,28 @@ export function ShareholderStructure({
             onAddOwner={(type) => onAddOwner(null, type)}
             onLinkExisting={(ownerId) => onLinkExisting("root", ownerId)}
           />
-          <p className="mt-1 text-sm text-gray-600">Root entity</p>
         </div>
+
+        {/* <div>
+          {(() => {
+            console.log("Nodes", nodes);
+            return null;
+          })()}
+        </div> */}
+
+
         {nodes.length === 0 ? null : (
           <>
             {nodes.map(({ entity, shareholding, depth }) => (
               <div
                 key={`shareholder-node-${entity.id}-${depth}`}
                 style={{ gridColumnStart: depth + 1 }}
-                className="relative pl-8"
+                className="relative"
               >
                 {depth > 0 && (
                   <>
-                    <span className="absolute left-0 top-1/2 h-px w-8 -translate-x-8 bg-gray-200" />
-                    <span className="absolute left-[-32px] top-0 h-full w-px bg-gray-200" />
+                    <span className="ConnectorH absolute top-1/2 h-px -translate-x-8 bg-gray-200" />
+                    <span className="ConnectorV absolute w-px bg-gray-200" />
                   </>
                 )}
                 <ShareholderCard
@@ -116,6 +132,9 @@ export function ShareholderStructure({
                   onLinkExisting={(ownerId) =>
                     onLinkExisting(entity.id, ownerId)
                   }
+                  onClick={
+                    onCardClick ? () => onCardClick(entity) : undefined
+                  }
                 />
               </div>
             ))}
@@ -123,12 +142,11 @@ export function ShareholderStructure({
         )}
       </div>
 
-      <p className="mt-4 text-xs text-gray-500">
-        Aggregate direct ownership:{" "}
-        <span className="font-semibold text-gray-900">
-          {totalShareholding.toFixed(2)}%
-        </span>
-      </p>
+
+
+      <ShareholdingTotal value={totalShareholding} />
+
+
 
       {nodes.length === 0 && (
         <p className="mt-6 text-sm text-gray-500">
@@ -136,6 +154,8 @@ export function ShareholderStructure({
           record.
         </p>
       )}
+
+
     </div>
   );
 }
