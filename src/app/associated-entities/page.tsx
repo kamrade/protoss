@@ -256,7 +256,7 @@ export default function AssociatedEntitiesPage() {
     <main className="mx-auto flex max-w-4xl flex-col gap-8 px-6 py-16">
       <header className="flex flex-col gap-2">
         <h1 className="text-4xl font-semibold text-gray-900">
-          Associated Entities
+          Associated Parties
         </h1>
         <p className="text-sm text-gray-600">
           Centralized records for every partner connected to this workspace.
@@ -265,7 +265,7 @@ export default function AssociatedEntitiesPage() {
 
       <Tabs defaultValue="entities" className="flex flex-col gap-4">
         <TabsList className="self-start bg-white">
-          <TabsTrigger value="entities">Associated Entities</TabsTrigger>
+          <TabsTrigger value="entities">Associated Parties</TabsTrigger>
           <TabsTrigger value="structure">Shareholder Structure</TabsTrigger>
         </TabsList>
         <TabsContent value="entities">

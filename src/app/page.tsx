@@ -3,7 +3,7 @@ import Link from "next/link";
 const sections = [
   {
     href: "/associated-entities",
-    title: "Associated Entities",
+    title: "Associated Parties",
     description:
       "Maintain full visibility over every partner, vendor, and subsidiary.",
   },
