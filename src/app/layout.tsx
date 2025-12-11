@@ -1,6 +1,8 @@
 import type { Metadata } from "next";
 import Link from "next/link";
 import { Geist, Geist_Mono } from "next/font/google";
+
+import { ApiKeyProvider } from "@/context/api-key";
 import "./globals.css";
 
 const geistSans = Geist({
@@ -29,25 +31,27 @@ export default function RootLayout({
       <body
         className={`${geistSans.variable} ${geistMono.variable} antialiased`}
       >
-        <header className="border-b border-gray-200 bg-white/80 backdrop-blur">
-          <div className="mx-auto flex max-w-5xl items-center justify-between px-6 py-4">
-            <Link
-              href="/"
-              className="text-lg font-semibold text-gray-900 hover:text-black"
-            >
-              Protoss
-            </Link>
-            <nav className="flex gap-4 text-sm font-medium text-gray-600">
-              <Link href="/" className="hover:text-gray-900">
-                Home
+        <ApiKeyProvider>
+          <header className="border-b border-gray-200 bg-white/80 backdrop-blur">
+            <div className="mx-auto flex max-w-5xl items-center justify-between px-6 py-4">
+              <Link
+                href="/"
+                className="text-lg font-semibold text-gray-900 hover:text-black"
+              >
+                Protoss
               </Link>
-              <Link href="/showcase" className="hover:text-gray-900">
-                Showcase
-              </Link>
-            </nav>
-          </div>
-        </header>
-        {children}
+              <nav className="flex gap-4 text-sm font-medium text-gray-600">
+                <Link href="/" className="hover:text-gray-900">
+                  Home
+                </Link>
+                <Link href="/showcase" className="hover:text-gray-900">
+                  Showcase
+                </Link>
+              </nav>
+            </div>
+          </header>
+          {children}
+        </ApiKeyProvider>
       </body>
     </html>
   );

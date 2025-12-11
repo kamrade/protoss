@@ -2,6 +2,16 @@
 
 import * as React from "react";
 
+import { Button } from "@/components/Button";
+import {
+  Dialog,
+  DialogContent,
+  DialogDescription,
+  DialogFooter,
+  DialogHeader,
+  DialogTitle,
+} from "@/components/Dialog";
+import { TextField } from "@/components/TextField";
 import { Tabs, TabsContent, TabsList, TabsTrigger } from "@/components/Tabs";
 import { AssociatedEntitySections } from "@/features/associated-entities/AssociatedEntitySections";
 import { ShareholderStructure } from "@/features/associated-entities/ShareholderStructure";
@@ -19,6 +29,7 @@ import type {
   EntitySectionAffiliation,
   IndividualAssociatedEntity,
 } from "@/types";
+import { useApiKey } from "@/context/api-key";
 
 const isIndividualEntity = (
   entity: AssociatedEntity
@@ -74,10 +85,21 @@ export default function AssociatedEntitiesPage() {
     ownerId: string;
     parentId: string;
   } | null>(null);
+  const [apiKeyInput, setApiKeyInput] = React.useState("");
+  const { apiKey, setApiKey } = useApiKey();
 
   React.useEffect(() => {
     console.log(associatedEntities);
   });
+
+  const handleApiKeySubmit = (event: React.FormEvent<HTMLFormElement>) => {
+    event.preventDefault();
+    const trimmedKey = apiKeyInput.trim();
+    if (!trimmedKey) {
+      return;
+    }
+    setApiKey(trimmedKey);
+  };
 
 
   const openDialog = (
@@ -251,6 +273,38 @@ export default function AssociatedEntitiesPage() {
       )
     );
   };
+
+  if (!apiKey) {
+    const isSubmitDisabled = apiKeyInput.trim().length === 0;
+    return (
+      <Dialog open>
+        <DialogContent>
+          <DialogHeader>
+            <DialogTitle>Connect with API access</DialogTitle>
+            <DialogDescription>
+              Enter the API key provided by your Protoss administrator to unlock
+              the workspace.
+            </DialogDescription>
+          </DialogHeader>
+          <form className="space-y-6" onSubmit={handleApiKeySubmit}>
+            <TextField
+              label="API key"
+              type="password"
+              placeholder="sk-..."
+              value={apiKeyInput}
+              onChange={(event) => setApiKeyInput(event.target.value)}
+              autoFocus
+            />
+            <DialogFooter>
+              <Button type="submit" disabled={isSubmitDisabled}>
+                Continue to app
+              </Button>
+            </DialogFooter>
+          </form>
+        </DialogContent>
+      </Dialog>
+    );
+  }
 
   return (
     <main className="mx-auto flex max-w-4xl flex-col gap-8 px-6 py-16">
