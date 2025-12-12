@@ -21,6 +21,12 @@ const sections = [
       "Review account health, onboarding status, and upcoming renewals.",
   },
   {
+    href: "/users-management",
+    title: "Users Management",
+    description:
+      "List every user across tenants with their permissions and access state.",
+  },
+  {
     href: "/live-profile",
     title: "Live Profile",
     description:

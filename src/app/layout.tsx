@@ -44,6 +44,9 @@ export default function RootLayout({
                 <Link href="/" className="hover:text-gray-900">
                   Home
                 </Link>
+                <Link href="/users-management" className="hover:text-gray-900">
+                  Users
+                </Link>
                 <Link href="/showcase" className="hover:text-gray-900">
                   Showcase
                 </Link>
