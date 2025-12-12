@@ -1,3 +1,8 @@
+"use client";
+
+import * as React from "react";
+import { useRouter } from "next/navigation";
+
 import { IUser } from "@/types/users";
 
 interface UserCardProps {
@@ -5,11 +10,29 @@ interface UserCardProps {
 }
 
 export function UserCard({ user }: UserCardProps) {
+  const router = useRouter();
   const hasTenants = user.tenants.length > 0;
   const hasPermissions = user.permissions.length > 0;
 
+  const navigateToDetails = React.useCallback(() => {
+    router.push(`/users-management/${user.id}`);
+  }, [router, user.id]);
+
+  const handleKeyDown = (event: React.KeyboardEvent<HTMLLIElement>) => {
+    if (event.key === "Enter" || event.key === " ") {
+      event.preventDefault();
+      navigateToDetails();
+    }
+  };
+
   return (
-    <li className="rounded-2xl border border-gray-100 bg-gray-50 px-6 py-5">
+    <li
+      role="link"
+      tabIndex={0}
+      onClick={navigateToDetails}
+      onKeyDown={handleKeyDown}
+      className="rounded-2xl border border-gray-100 bg-gray-50 px-6 py-5 outline-none transition hover:border-gray-200 hover:bg-gray-100 focus-visible:ring-2 focus-visible:ring-gray-400 focus-visible:ring-offset-2 focus-visible:ring-offset-white"
+    >
       <div className="flex flex-col gap-4 md:flex-row md:items-start md:justify-between">
         <div>
           <h2 className="text-xl font-semibold text-gray-900">
@@ -45,7 +68,11 @@ export function UserCard({ user }: UserCardProps) {
       )}
 
       {hasPermissions && (
-        <details className="mt-4 rounded-xl bg-white px-4 py-3">
+        <details
+          className="mt-4 rounded-xl bg-white px-4 py-3"
+          onClick={(event) => event.stopPropagation()}
+          onKeyDown={(event) => event.stopPropagation()}
+        >
           <summary className="cursor-pointer text-sm font-semibold text-gray-800">
             Permissions ({user.permissions.length})
           </summary>
