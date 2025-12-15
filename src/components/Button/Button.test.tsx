@@ -23,7 +23,7 @@ describe("Button", () => {
 
     const button = screen.getByRole("button", { name: "Save" });
     expect(button).toHaveClass("border-gray-300");
-    expect(button).toHaveClass("px-5", "py-3");
+    expect(button).toHaveClass("px-5", "py-[15px]");
     expect(button).toHaveClass("custom-class");
   });
 

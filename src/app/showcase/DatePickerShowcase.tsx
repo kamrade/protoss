@@ -57,7 +57,7 @@ export function DatePickerShowcase() {
               <DatePicker value={offboardingDate} onChange={setOffboardingDate} />
             </div>
           </div>
-          <Button>Schedule</Button>
+          <Button size='lg'>Schedule</Button>
         </div>
       </div>
     </section>

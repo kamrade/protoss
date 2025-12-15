@@ -3,6 +3,7 @@
 import * as React from "react";
 import * as Popover from "@radix-ui/react-popover";
 import { ChevronLeftIcon, ChevronRightIcon, CalendarIcon } from "@radix-ui/react-icons";
+import { TextField } from "@/components/TextField";
 
 const cn = (...classes: Array<string | undefined | false>) =>
   classes.filter(Boolean).join(" ");
@@ -18,13 +19,59 @@ export interface DatePickerProps {
   className?: string;
 }
 
-const formatDate = (date: Date | null | undefined) => {
+const formatInputValue = (date: Date | null | undefined) => {
   if (!date) return "";
-  return new Intl.DateTimeFormat("en", {
-    month: "short",
-    day: "numeric",
-    year: "numeric",
-  }).format(date);
+  const day = String(date.getDate()).padStart(2, "0");
+  const month = String(date.getMonth() + 1).padStart(2, "0");
+  const year = String(date.getFullYear()).padStart(4, "0");
+  return `${day}/${month}/${year}`;
+};
+
+const maskDateInput = (raw: string) => {
+  const digits = raw.replace(/\D/g, "").slice(0, 8);
+  const day = digits.slice(0, 2);
+  const month = digits.slice(2, 4);
+  const year = digits.slice(4, 8);
+
+  if (digits.length <= 2) {
+    return day;
+  }
+  if (digits.length <= 4) {
+    return [day, month].filter(Boolean).join("/");
+  }
+  return [day, month, year].filter(Boolean).join("/");
+};
+
+const parseInputValue = (value: string) => {
+  const [dayStr, monthStr, yearStr] = value.split("/");
+
+  if (!dayStr || !monthStr || !yearStr) {
+    return null;
+  }
+
+  if (dayStr.length !== 2 || monthStr.length !== 2 || yearStr.length !== 4) {
+    return null;
+  }
+
+  const day = Number(dayStr);
+  const month = Number(monthStr);
+  const year = Number(yearStr);
+
+  if ([day, month, year].some((part) => Number.isNaN(part))) {
+    return null;
+  }
+
+  const parsed = new Date(year, month - 1, day);
+
+  if (
+    parsed.getFullYear() !== year ||
+    parsed.getMonth() !== month - 1 ||
+    parsed.getDate() !== day
+  ) {
+    return null;
+  }
+
+  return parsed;
 };
 
 const buildCalendarGrid = (current: Date) => {
@@ -60,6 +107,7 @@ export function DatePicker({
 }: DatePickerProps) {
   const [internalValue, setInternalValue] = React.useState<Date | null>(defaultValue);
   const selectedValue = value !== undefined ? value : internalValue;
+  const [inputValue, setInputValue] = React.useState(() => formatInputValue(selectedValue));
   const [viewDate, setViewDate] = React.useState(() => {
     const base = selectedValue ?? new Date();
     return new Date(base.getFullYear(), base.getMonth(), 1);
@@ -73,6 +121,10 @@ export function DatePicker({
     const base = selectedValue ?? new Date();
     setViewDate(new Date(base.getFullYear(), base.getMonth(), 1));
   }, [selectedValue, open]);
+
+  React.useEffect(() => {
+    setInputValue(formatInputValue(selectedValue));
+  }, [selectedValue]);
 
   const handleSelect = (day: Date | null) => {
     if (!day || disabled) {
@@ -89,26 +141,60 @@ export function DatePicker({
     setViewDate((prev) => new Date(prev.getFullYear(), prev.getMonth() + offset, 1));
   };
 
+  const handleInputChange = (event: React.ChangeEvent<HTMLInputElement>) => {
+    setInputValue(maskDateInput(event.target.value));
+  };
+
+  const commitInputValue = () => {
+    if (!inputValue) {
+      setInputValue(formatInputValue(selectedValue));
+      return;
+    }
+
+    const parsed = parseInputValue(inputValue);
+
+    if (!parsed) {
+      setInputValue(formatInputValue(selectedValue));
+      return;
+    }
+
+    handleSelect(parsed);
+  };
+
+  const handleInputBlur = () => {
+    commitInputValue();
+  };
+
+  const handleInputKeyDown = (event: React.KeyboardEvent<HTMLInputElement>) => {
+    if (event.key === "Enter") {
+      event.preventDefault();
+      commitInputValue();
+    }
+  };
+
   return (
     <Popover.Root open={open} onOpenChange={setOpen}>
       <Popover.Trigger asChild>
-        <button
-          type="button"
-          disabled={disabled}
-          className={cn(
-            "inline-flex w-full items-center justify-between rounded-2xl border border-gray-200 bg-white px-4 py-3 text-left text-sm text-gray-900 shadow-sm transition focus-visible:outline focus-visible:outline-2 focus-visible:outline-gray-900 disabled:cursor-not-allowed disabled:opacity-70",
-            className
-          )}
-        >
-          <span className={cn(!selectedValue && "text-gray-400")}>
-            {selectedValue ? formatDate(selectedValue) : placeholder}
-          </span>
-          <CalendarIcon className="h-4 w-4 text-gray-500" />
-        </button>
+        <div className={cn("w-full", disabled && "pointer-events-none")}>
+          <TextField
+            type="text"
+            value={inputValue}
+            onChange={handleInputChange}
+            onBlur={handleInputBlur}
+            onKeyDown={handleInputKeyDown}
+            placeholder={placeholder}
+            disabled={disabled}
+            inputMode="numeric"
+            autoComplete="off"
+            trailingVisual={<CalendarIcon className="h-4 w-4 text-gray-500" />}
+            fieldClassName={className}
+          />
+        </div>
       </Popover.Trigger>
       <Popover.Portal>
         <Popover.Content
           sideOffset={8}
+          onOpenAutoFocus={(event) => event.preventDefault()}
           className="z-50 w-[280px] rounded-2xl border border-gray-200 bg-white p-4 shadow-xl focus-visible:outline-none"
         >
           

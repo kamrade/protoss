@@ -16,7 +16,7 @@ const variantStyles = {
 const sizeStyles = {
   sm: "px-3 py-1.5 text-xs",
   md: "px-4 py-2 text-sm",
-  lg: "px-5 py-3 text-base",
+  lg: "px-5 py-[15px] text-base",
 } as const;
 
 export type ButtonVariant = keyof typeof variantStyles;
