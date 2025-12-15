@@ -38,6 +38,12 @@ const sections = [
     description:
       "Preview Radix-based components and usage guidelines for new screens.",
   },
+  {
+    href: "/hs-clients",
+    title: "HS Clients",
+    description:
+      "Openpayd Haystack Clients",
+  },
 ];
 
 export default function Home() {
