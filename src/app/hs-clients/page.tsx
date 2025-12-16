@@ -5,7 +5,7 @@ import Link from "next/link";
 
 import { useApiKey } from "@/context/api-key";
 import { getHSClients } from "@/features/hs-clients/api";
-import { HSClientCard } from "@/features/hs-clients/HSClientCard";
+import { HSClientCard } from "@/features/hs-clients/components/HSClientCard";
 import { IHSClientResponse } from "@/types/hs-clients";
 
 type LoadState = "idle" | "loading" | "error";
