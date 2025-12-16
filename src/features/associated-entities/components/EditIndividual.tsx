@@ -18,7 +18,8 @@ import { TextField } from "@/components/TextField";
 import type {
   CorporateAssociatedEntity,
   IndividualAssociatedEntity,
-} from "@/types";
+  Affiliation
+} from "@/features/associated-entities";
 
 type RoleId = "shareholder" | "director" | "associatedEntity" | "user";
 
@@ -89,7 +90,7 @@ const deriveRolesFromEntity = (
     user: false,
   };
 
-  entity?.affiliation.forEach((aff) => {
+  entity?.affiliation.forEach((aff: Affiliation) => {
     switch (aff.type) {
       case "SHAREHOLDER":
         base.shareholder = true;
@@ -113,7 +114,7 @@ const deriveRolesFromEntity = (
 
 const getShareholdingPercent = (entity: IndividualAssociatedEntity | null) => {
   const shareholdingEntry = entity?.affiliation.find(
-    (aff) => aff.type === "SHAREHOLDER"
+    (aff: Affiliation) => aff.type === "SHAREHOLDER"
   );
   return shareholdingEntry?.shareholding
     ? String(shareholdingEntry.shareholding)
@@ -123,8 +124,8 @@ const getShareholdingPercent = (entity: IndividualAssociatedEntity | null) => {
 const createFormState = (entity: IndividualAssociatedEntity | null): FormState => {
   const indirectShareholdings =
     entity?.affiliation
-      .filter((aff) => aff.type === "INDIRECT_SHAREHOLDER")
-      .map((aff) => ({
+      .filter((aff: Affiliation) => aff.type === "INDIRECT_SHAREHOLDER")
+      .map((aff: Affiliation) => ({
         parentId: aff.parentEntity ?? "",
         shareholding: aff.shareholding?.toString() ?? "",
       })) ?? [];

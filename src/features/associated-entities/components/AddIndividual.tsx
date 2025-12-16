@@ -18,7 +18,8 @@ import { TextField } from "@/components/TextField";
 import type {
   CorporateAssociatedEntity,
   IndividualAssociatedEntity,
-} from "@/types";
+  Affiliation
+} from "@/features/associated-entities";
 
 type RoleId = "shareholder" | "director" | "associatedEntity" | "user";
 
@@ -105,7 +106,7 @@ const createInitialFormState = (
   };
 
   if (existing) {
-    existing.affiliation.forEach((aff) => {
+    existing.affiliation.forEach((aff: Affiliation) => {
       switch (aff.type) {
         case "SHAREHOLDER":
           roles.shareholder = true;
@@ -129,8 +130,8 @@ const createInitialFormState = (
     enableIndirect && (existing || prefillIndirect?.length)
       ? existing
         ? existing.affiliation
-            .filter((aff) => aff.type === "INDIRECT_SHAREHOLDER")
-            .map((aff) => ({
+            .filter((aff: Affiliation) => aff.type === "INDIRECT_SHAREHOLDER")
+            .map((aff: Affiliation) => ({
               parentId: aff.parentEntity ?? "",
               shareholding: aff.shareholding?.toString() ?? "",
             }))
@@ -158,7 +159,7 @@ const createInitialFormState = (
     mobileNumber: existing?.mobileNumber ?? "",
     accessRights: existing?.accessRights ?? "",
     shareholdingPercent:
-      existing?.affiliation.find((aff) => aff.type === "SHAREHOLDER")
+      existing?.affiliation.find((aff: Affiliation) => aff.type === "SHAREHOLDER")
         ?.shareholding?.toString() ?? "",
     roles,
     indirectShareholdings,

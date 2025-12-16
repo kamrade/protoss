@@ -12,7 +12,8 @@ import type {
   DialogType,
   EntitySectionAffiliation,
   IndividualAssociatedEntity,
-} from "@/types";
+  AffiliationType
+} from "@/features/associated-entities";
 import { entitySections } from "@/const";
 import { AssociatedEntityCard } from "./AssociatedEntityCard";
 import { ShareholdingTotal } from "./ShareholdingTotal";
@@ -46,20 +47,20 @@ export function AssociatedEntitySections({
     <div className="flex flex-col gap-4">
       {entitySections.map(({ title, affiliation, options }) => {
         const sectionEntities = associatedEntities.filter((entity) =>
-          entity.affiliation.some(({ type }) => type === affiliation)
+          entity.affiliation.some(({ type }: { type: AffiliationType }) => type === affiliation)
         );
 
         const availableIndividuals = associatedEntities.filter(
           (entity) =>
             isIndividual(entity) &&
-            !entity.affiliation.some(({ type }) => type === affiliation)
+            !entity.affiliation.some(({ type }: { type: AffiliationType }) => type === affiliation)
         );
 
         const totalShareholding =
           affiliation === "SHAREHOLDER"
             ? sectionEntities.reduce((sum, entity) => {
                 const share = entity.affiliation.find(
-                  ({ type }) => type === "SHAREHOLDER"
+                  ({ type }: { type: AffiliationType }) => type === "SHAREHOLDER"
                 )?.shareholding;
                 return sum + (typeof share === "number" ? share : 0);
               }, 0)

@@ -1,3 +1,6 @@
+import { KYCStatus } from "../kyc";
+import { PEPStatus } from "../pep";
+
 export interface ISort {
   ascending: boolean;
   descending: boolean;
@@ -38,4 +41,52 @@ export interface IHSClientResponse {
   sort: ISort[];
   totalElements: number;
   totalPages: number;
+}
+
+export interface IHSClientOverview {
+  applications: string[];
+  businessAddress: string;
+  categoryId: number;
+  companyName: string;
+  contactEmail: string;
+  contactFirstName: string;
+  contactLastName: string;
+  contactMiddleName: string;
+  contactPhone: string;
+  contactPosition: string;
+  contactTitle: string;
+  createdBy: string;
+  createdByName: string;
+  createdDate: string;
+  id: string;
+  referralPartner: string;
+  relationshipManagerEmail: string;
+  salesManager: string;
+  salesPersonEmail: string;
+  status: string;
+  tenantId: number;
+}
+
+export interface IApplication {
+  categoryId: number;
+  companyName: string;
+  createdBy: string;
+  createdByName: string;
+  createdDate: string;
+  haystackClientId: string;
+  id: string;
+  isIdle: boolean;
+  isRiskScoringSubmitted: boolean;
+  kind: string; // TYPING "LIVE_PROFILE"
+  kycStatus: KYCStatus;
+  mainStatus: string; // TYPE "PENDING_ON_CUSTOMER"
+  modifiedBy: string;
+  modifiedByName: string;
+  modifiedDate: string;
+  number: string;
+  pepStatus: PEPStatus;
+  riskScoringVersion: number;
+  riskStatus: string; // TYPE "NOT_PERFORMED"
+  salesManager: string;
+  version: number;
 }

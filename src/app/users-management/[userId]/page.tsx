@@ -6,7 +6,7 @@ import { useParams } from "next/navigation";
 
 import { useApiKey } from "@/context/api-key";
 import { getUserDetails } from "@/features/users/api";
-import { IUser } from "@/types/users";
+import { IUser, UserTenant, UserPermission } from "@/features/users";
 
 type LoadState = "idle" | "loading" | "error";
 
@@ -210,7 +210,7 @@ export default function UserDetailPage() {
                 </p>
               ) : (
                 <div className="mt-4 grid gap-4 md:grid-cols-2">
-                  {user.tenants.map((tenant) => (
+                  {user.tenants.map((tenant: UserTenant) => (
                     <div
                       key={tenant.id}
                       className="rounded-2xl border border-gray-100 bg-gray-50 px-4 py-4"
@@ -241,7 +241,7 @@ export default function UserDetailPage() {
                 </p>
               ) : (
                 <ul className="mt-4 space-y-3">
-                  {user.permissions.map((permission) => (
+                  {user.permissions.map((permission: UserPermission) => (
                     <li
                       key={permission.id}
                       className="rounded-2xl border border-gray-100 bg-gray-50 px-4 py-3"

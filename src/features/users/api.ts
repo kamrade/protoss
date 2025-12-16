@@ -1,4 +1,4 @@
-import { IUser } from "@/types/users";
+import { IUser } from "@/features/users";
 
 const USERS_ENDPOINT = "http://localhost:3030/api/v1/hs-users";
 const DEFAULT_TENANT_ID = "3";

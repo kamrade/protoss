@@ -1,7 +1,8 @@
-import type { AssociatedEntity, CorporateAssociatedEntity, DialogType } from "@/types";
+import type { Affiliation, AssociatedEntity, CorporateAssociatedEntity, DialogType } from "@/features/associated-entities";
 import { ShareholderCard } from "./ShareholderCard";
 import { ShareholdingTotal } from "./ShareholdingTotal";
 import './ShareholderStructure.css';
+import { AffiliationType } from "../types";
 
 interface ShareholderStructureProps {
   onAddOwner: (parentId: string | null, type: DialogType) => void;
@@ -11,7 +12,7 @@ interface ShareholderStructureProps {
 }
 
 const getDirectShareholding = (entity: AssociatedEntity) =>
-  entity.affiliation.find(({ type }) => type === "SHAREHOLDER")?.shareholding;
+  entity.affiliation.find(({ type }: { type: AffiliationType}) => type === "SHAREHOLDER")?.shareholding;
 
 const starbugzEntity: CorporateAssociatedEntity = {
   id: "root",
@@ -37,7 +38,7 @@ export function ShareholderStructure({
   onCardClick,
 }: ShareholderStructureProps) {
   const shareholders = existingEntities.filter((entity) =>
-    entity.affiliation.some(({ type }) => type === "SHAREHOLDER")
+    entity.affiliation.some(({ type }: { type: AffiliationType }) => type === "SHAREHOLDER")
   );
 
   const totalShareholding = shareholders.reduce(
@@ -53,9 +54,9 @@ export function ShareholderStructure({
   existingEntities.forEach((entity) => {
     entity.affiliation
       .filter(
-        (aff) => aff.type === "INDIRECT_SHAREHOLDER" && aff.parentEntity
+        (aff: Affiliation) => aff.type === "INDIRECT_SHAREHOLDER" && aff.parentEntity
       )
-      .forEach((aff) => {
+      .forEach((aff: Affiliation) => {
         const list = indirectMap.get(aff.parentEntity!) ?? [];
         list.push({
           entity,

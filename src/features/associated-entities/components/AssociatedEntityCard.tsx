@@ -3,7 +3,8 @@ import UserLineIcon from "remixicon-react/UserLineIcon";
 import type {
   AssociatedEntity,
   IndividualAssociatedEntity,
-} from "@/types";
+  AffiliationType
+} from "@/features/associated-entities";
 
 const isIndividualEntity = (
   entity: AssociatedEntity
@@ -25,7 +26,7 @@ export function AssociatedEntityCard({
   onRemove,
 }: AssociatedEntityCardProps) {
   const shareholding = entity.affiliation.find(
-    ({ type }) => type === "SHAREHOLDER"
+    ({ type }: { type: AffiliationType}) => type === "SHAREHOLDER"
   )?.shareholding;
   const baseClasses =
     "rounded-2xl border border-gray-100 bg-gray-50 px-4 py-3";

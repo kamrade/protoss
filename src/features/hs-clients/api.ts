@@ -24,8 +24,8 @@ export async function getHSClients(
   const url = HS_CLIENTS_ENDPOINT 
     + `?sort=${sortField},${sortDirection}` 
     + (search ? '&search=' + search : '')
-    + `page=${page}`
-    + `size=${size}`;
+    + `&page=${page}`
+    + `&size=${size}`;
   const response = await fetch(url, {
     method: "GET",
     headers: defaultHeaders(apiKey),

@@ -6,7 +6,7 @@ import Link from "next/link";
 import { useApiKey } from "@/context/api-key";
 import { getUsers } from "@/features/users/api";
 import { UserCard } from "@/features/users/components/UserCard";
-import { IUser } from "@/types/users";
+import { IUser } from "@/features/users";
 
 type LoadState = "idle" | "loading" | "error";
 

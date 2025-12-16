@@ -14,7 +14,7 @@ import {
 } from "@/components/Dialog";
 import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from "@/components/Select";
 import { TextField } from "@/components/TextField";
-import type { CorporateAssociatedEntity } from "@/types";
+import type { CorporateAssociatedEntity, Affiliation } from "@/features/associated-entities";
 
 const legalEntityTypes = [
   { value: "llc", label: "Limited Liability Company" },
@@ -25,7 +25,7 @@ const legalEntityTypes = [
 
 const getShareholdingPercent = (entity: CorporateAssociatedEntity | null) => {
   const shareholdingEntry = entity?.affiliation.find(
-    (aff) => aff.type === "SHAREHOLDER"
+    (aff: Affiliation) => aff.type === "SHAREHOLDER"
   );
   return shareholdingEntry?.shareholding
     ? String(shareholdingEntry.shareholding)
@@ -57,8 +57,8 @@ const createFormState = (
 ): FormState => {
   const indirectShareholdings =
     entity?.affiliation
-      .filter((aff) => aff.type === "INDIRECT_SHAREHOLDER")
-      .map((aff) => ({
+      .filter((aff: Affiliation) => aff.type === "INDIRECT_SHAREHOLDER")
+      .map((aff: Affiliation) => ({
         parentId: aff.parentEntity ?? "",
         shareholding: aff.shareholding?.toString() ?? "",
       })) ?? [];
@@ -69,7 +69,7 @@ const createFormState = (
     registrationNumber: entity?.companyNumber ?? "",
     legalEntityType: entity?.legalEntityType ?? "",
     roleShareholder: Boolean(
-      entity?.affiliation.some((aff) => aff.type === "SHAREHOLDER")
+      entity?.affiliation.some((aff: Affiliation) => aff.type === "SHAREHOLDER")
     ),
     shareholdingPercent: getShareholdingPercent(entity),
     indirectShareholdings,

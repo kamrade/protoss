@@ -9,7 +9,8 @@ import { HSClientCard } from "@/features/hs-clients/components/HSClientCard";
 import { IHSClientResponse } from "@/features/hs-clients";
 import { Select, SelectTrigger, SelectValue, SelectContent, SelectItem } from "@/components/Select";
 import { TextField } from "@/components/TextField";
-import { MagnifyingGlassIcon } from "@radix-ui/react-icons";
+import { Button } from "@/components/Button";
+import { MagnifyingGlassIcon } from "@radix-ui/react-icons"; 
 
 type LoadState = "idle" | "loading" | "error";
 
@@ -29,11 +30,20 @@ export default function HSClientsPage() {
   const [searchInput, setSearchInput] = React.useState<string>("");
   const [search, setSearch] = React.useState<string>("");
 
+  // Pagination state
+  const [page, setPage] = React.useState<number>(0);
+  const [size, setSize] = React.useState<number>(20);
+
   // debounce search input
   React.useEffect(() => {
     const t = setTimeout(() => setSearch(searchInput), 400);
     return () => clearTimeout(t);
   }, [searchInput]);
+
+  // if search, sort or page size change, reset to first page
+  React.useEffect(() => {
+    setPage(0);
+  }, [search, sortField, sortDirection, size]);
 
   React.useEffect(() => {
     if (!apiKey) {
@@ -47,7 +57,7 @@ export default function HSClientsPage() {
     setLoadState("loading");
     setError(null);
 
-    getHSClients(apiKey, sortField, sortDirection, search)
+    getHSClients(apiKey, sortField, sortDirection, search, page, size)
       .then((data) => {
         if (!isActive) {
           return;
@@ -71,7 +81,7 @@ export default function HSClientsPage() {
     return () => {
       isActive = false;
     };
-  }, [apiKey, sortField, sortDirection, search]);
+  }, [apiKey, sortField, sortDirection, search, page, size]);
 
   if (!apiKey) {
     return (
@@ -187,11 +197,43 @@ export default function HSClientsPage() {
         )}
 
         {hasClients && (
-          <ul className="space-y-1">
-            {clients.map((client) => (
-              <HSClientCard key={client.id} client={client} />
-            ))}
-          </ul>
+          <>
+            <ul className="space-y-1">
+              {clients.map((client) => (
+                <HSClientCard key={client.id} client={client} />
+              ))}
+            </ul>
+
+            <div className="mx-auto max-w-5xl px-6 py-6 flex items-center justify-between">
+              <div className="flex items-center gap-2">
+                <Button disabled={page <= 0} onClick={() => setPage((p) => Math.max(0, p - 1))}>
+                  Previous
+                </Button>
+                <Button disabled={clientsData?.last} onClick={() => setPage((p) => p + 1)}>
+                  Next
+                </Button>
+              </div>
+
+              <div className="flex items-center gap-4">
+                <p className="text-sm text-gray-500">
+                  Page {((clientsData?.number ?? page) + 1).toString()} of {clientsData?.totalPages ?? "-"}
+                </p>
+
+                <div className="w-36">
+                  <Select value={String(size)} onValueChange={(v) => setSize(Number(v))}>
+                    <SelectTrigger>
+                      <SelectValue placeholder="Page size" />
+                    </SelectTrigger>
+                    <SelectContent>
+                      <SelectItem value="10">10 / page</SelectItem>
+                      <SelectItem value="20">20 / page</SelectItem>
+                      <SelectItem value="50">50 / page</SelectItem>
+                    </SelectContent>
+                  </Select>
+                </div>
+              </div>
+            </div>
+          </>
         )}
       </section>
     </main>

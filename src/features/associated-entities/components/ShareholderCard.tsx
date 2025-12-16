@@ -8,10 +8,11 @@ import {
 import Building2LineIcon from "remixicon-react/Building2LineIcon";
 import UserLineIcon from "remixicon-react/UserLineIcon";
 import type {
+  AffiliationType,
   AssociatedEntity,
   DialogType,
   IndividualAssociatedEntity,
-} from "@/types";
+} from "@/features/associated-entities";
 import { entitySections } from "@/const";
 
 const shareholderSection = entitySections.find(
@@ -52,7 +53,7 @@ export function ShareholderCard({
 }: ShareholderCardProps) {
   const shareholding =
     shareholdingOverride ??
-    entity.affiliation.find(({ type }) => type === "SHAREHOLDER")
+    entity.affiliation.find(({ type }: { type: AffiliationType  }) => type === "SHAREHOLDER")
       ?.shareholding;
   const baseClasses =
     "rounded-2xl border border-gray-100 bg-gray-50 px-4 py-3";

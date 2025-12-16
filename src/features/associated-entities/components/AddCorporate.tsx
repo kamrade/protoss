@@ -14,7 +14,7 @@ import {
 } from "@/components/Dialog";
 import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from "@/components/Select";
 import { TextField } from "@/components/TextField";
-import type { CorporateAssociatedEntity } from "@/types";
+import type { CorporateAssociatedEntity } from "@/features/associated-entities";
 
 const sectionRolePreset: Record<string, boolean> = {
   Shareholders: true,

@@ -13,7 +13,7 @@ import {
 } from "@/components/Dialog";
 import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from "@/components/Select";
 import { TextField } from "@/components/TextField";
-import type { IndividualAssociatedEntity } from "@/types";
+import type { IndividualAssociatedEntity } from "@/features/associated-entities";
 
 const accessRightsOptions = [
   { value: "viewer", label: "Viewer" },

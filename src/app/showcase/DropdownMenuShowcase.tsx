@@ -25,7 +25,7 @@ const primaryItems = [
 ] as const;
 
 const secondaryItems = [
-  { title: "Workspace settings", icon: GearIcon },
+  { title: "Workspace settings", icon: GearIcon, destructive: false },
   { title: "Logout", icon: ExitIcon, destructive: true },
 ] as const;
 

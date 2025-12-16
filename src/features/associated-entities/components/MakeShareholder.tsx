@@ -12,7 +12,7 @@ import {
   DialogTitle,
 } from "@/components/Dialog";
 import { TextField } from "@/components/TextField";
-import type { IndividualAssociatedEntity } from "@/types";
+import type { IndividualAssociatedEntity } from "@/features/associated-entities";
 
 interface MakeShareholderProps {
   open: boolean;

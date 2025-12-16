@@ -63,7 +63,7 @@ export const TextField = React.forwardRef<HTMLInputElement, TextFieldProps>(
       const iconClass = cn(
         "flex items-center text-gray-400",
         disabled && "text-gray-300",
-        errorMessage && "text-red-500"
+        errorMessage && "text-red-500" || ""
       );
 
       return React.isValidElement(visual) ? (
