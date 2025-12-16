@@ -58,7 +58,7 @@ export default function HSClientsPage() {
     setLoadState("loading");
     setError(null);
 
-    getHSClients(apiKey, sortField, sortDirection, search, page, size)
+    getHSClients({ apiKey, sortField, sortDirection, search, page, size })
       .then((data) => {
         if (!isActive) {
           return;

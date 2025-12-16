@@ -1,4 +1,4 @@
-import { IHSClientResponse } from "@/features/hs-clients";
+import { IHSClientResponse, IHSClientOverview } from "@/features/hs-clients";
 import type { SortDirection } from "@/features/common-types";
 
 const HS_CLIENTS_ENDPOINT =
@@ -12,20 +12,54 @@ const defaultHeaders = (apiKey: string) => ({
 
 export type SortField = 'companyName' | 'status' | 'createdDate' | 'kycStatus' | 'pepStatus';
 
-export async function getHSClients(
-  apiKey: string,
-  sortField: SortField = 'createdDate',
-  sortDirection: SortDirection = 'desc',
-  search: string = '',
-  page: number = 0,
-  size: number = 80
-): Promise<IHSClientResponse> {
+export interface GetHSClientsOptions {
+  apiKey: string;
+  sortField?: SortField;
+  sortDirection?: SortDirection;
+  search?: string;
+  page?: number;
+  size?: number;
+  clientId?: string;
+}
 
-  const url = HS_CLIENTS_ENDPOINT 
-    + `?sort=${sortField},${sortDirection}` 
-    + (search ? '&search=' + search : '')
-    + `&page=${page}`
-    + `&size=${size}`;
+export function getHSClients(
+  opts: GetHSClientsOptions & { clientId: string }
+): Promise<IHSClientOverview>;
+export function getHSClients(
+  opts: GetHSClientsOptions & { clientId?: undefined }
+): Promise<IHSClientResponse>;
+export async function getHSClients({
+  apiKey,
+  sortField = 'createdDate',
+  sortDirection = 'desc',
+  search = '',
+  page = 0,
+  size = 80,
+  clientId,
+}: GetHSClientsOptions): Promise<IHSClientResponse | IHSClientOverview> {
+  // If a clientId is provided, fetch the single client resource and return its overview
+  if (clientId) {
+    const url = `${HS_CLIENTS_ENDPOINT}/${encodeURIComponent(clientId)}`;
+    const response = await fetch(url, {
+      method: "GET",
+      headers: defaultHeaders(apiKey),
+      cache: "no-store",
+    });
+
+    if (!response.ok) {
+      throw new Error(
+        `Failed to fetch Haystack client ${clientId} (status ${response.status})`
+      );
+    }
+
+    return (await response.json()) as IHSClientOverview;
+  }
+
+  const url =
+    HS_CLIENTS_ENDPOINT + `?sort=${sortField},${sortDirection}` +
+    (search ? "&search=" + encodeURIComponent(search) : "") +
+    `&page=${page}` +
+    `&size=${size}`;
   const response = await fetch(url, {
     method: "GET",
     headers: defaultHeaders(apiKey),
