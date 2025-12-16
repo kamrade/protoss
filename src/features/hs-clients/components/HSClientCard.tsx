@@ -3,6 +3,7 @@
 import * as React from "react";
 
 import { IHSClient } from "@/features/hs-clients";
+import { Badge } from "@/components/Badge";
 
 interface HSClientCardProps {
   client: IHSClient;
@@ -26,8 +27,7 @@ const formatDate = (isoDate: string) => {
   }).format(date);
 };
 
-const statusBadgeClasses =
-  "inline-flex items-center gap-2 rounded-full bg-white px-4 py-1 text-sm font-medium text-gray-800";
+
 
 export function HSClientCard({ client }: HSClientCardProps) {
   return (
@@ -50,18 +50,18 @@ export function HSClientCard({ client }: HSClientCardProps) {
             </div>
 
             <div className="flex flex-wrap gap-2">
-              <span className={statusBadgeClasses}>
+              <Badge variant="subtle">
                 <span className="h-2 w-2 rounded-full bg-gray-400" />
                 {client.status}
-              </span>
-              <span className={statusBadgeClasses}>
+              </Badge>
+              <Badge variant="subtle" >
                 <span className="h-2 w-2 rounded-full bg-blue-400" />
                 KYC: {client.kycStatus}
-              </span>
-              <span className={statusBadgeClasses}>
+              </Badge>
+              <Badge variant="subtle" >
                 <span className="h-2 w-2 rounded-full bg-amber-400" />
                 PEP: {client.pepStatus}
-              </span>
+              </Badge>
             </div>
           </div>
         </div>

@@ -34,7 +34,7 @@ export const Badge = React.forwardRef<HTMLSpanElement, BadgeProps>(
     return (
       <Comp
         ref={forwardedRef}
-        className={`${baseStyles} ${variantStyles[variant]} ${sizeStyles[size]} ${className}`}
+        className={`${baseStyles} ${variantStyles[variant]} ${sizeStyles[size]} ${className} gap-1`}
         {...props}
       />
     );
