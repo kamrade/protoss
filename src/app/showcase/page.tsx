@@ -2,6 +2,7 @@ import { ButtonShowcase } from "./ButtonShowcase";
 import { DropdownMenuShowcase } from "./DropdownMenuShowcase";
 import { IconButtonShowcase } from "./IconButtonShowcase";
 import { TextFieldShowcase } from "./TextFieldShowcase";
+import { BadgeShowcase } from "./BadgeShowcase";
 import { SelectShowcase } from "./SelectShowcase";
 import { DialogShowcase } from "./DialogShowcase";
 import { DatePickerShowcase } from "./DatePickerShowcase";
@@ -25,6 +26,7 @@ export default function ShowcasePage() {
       </header>
       <ButtonShowcase />
       <IconButtonShowcase />
+      <BadgeShowcase />
       <TextFieldShowcase />
       <SelectShowcase />
       <DatePickerShowcase />
