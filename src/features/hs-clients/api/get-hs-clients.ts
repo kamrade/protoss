@@ -51,7 +51,6 @@ export async function getHSClients({
         `Failed to fetch Haystack client ${clientId} (status ${response.status})`
       );
     }
-
     return (await response.json()) as IHSClientOverview;
   }
 
