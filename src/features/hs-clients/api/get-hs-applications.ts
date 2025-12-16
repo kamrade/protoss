@@ -24,13 +24,15 @@ export async function getHSApplications(
   sortDirection: SortDirection = "desc",
   search: string = "",
   page: number = 0,
-  size: number = 80
+  size: number = 80,
+  haystackClientId?: string
 ): Promise<IApplicationsResponse> {
   const url =
     HS_APPLICATIONS_ENDPOINT + `?sort=${sortField},${sortDirection}` +
     (search ? "&search=" + encodeURIComponent(search) : "") +
     `&page=${page}` +
-    `&size=${size}`;
+    `&size=${size}` +
+    (haystackClientId ? `&haystackClientId=${haystackClientId}` : '');
 
   const response = await fetch(url, {
     method: "GET",
