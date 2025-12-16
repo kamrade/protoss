@@ -79,44 +79,52 @@ export default function HSClientsPage() {
   const totalClients = clientsData?.totalElements ?? 0;
 
   return (
-    <main className="mx-auto flex min-h-screen max-w-5xl flex-col gap-8 px-6 py-10">
-      <header className="rounded-3xl border border-gray-200 bg-white px-10 py-12 shadow-sm">
-        <p className="text-sm uppercase tracking-[0.2em] text-gray-500">
-          Directory
-        </p>
-        <h1 className="mt-4 text-4xl font-semibold text-gray-900">
-          Haystack Clients
-        </h1>
-        <p className="mt-3 text-lg text-gray-600">
-          Review onboarding data, KYC, and PEP statuses for every connected
-          client.
-        </p>
-        {clientsData && (
-          <p className="mt-4 text-sm text-gray-500">
-            Showing {clients.length} of {totalClients} clients
+    <main className="min-h-screen">
+      <div className="mx-auto flex max-w-5xl flex-col gap-8 px-6 py-10">
+        <header className="py-6 border-b-1 border-gray-300">
+          <p className="text-sm uppercase tracking-[0.2em] text-gray-500">
+            Directory
           </p>
-        )}
-      </header>
+          <h1 className="mt-4 text-4xl font-semibold text-gray-900">
+            Haystack Clients
+          </h1>
+          <p className="mt-3 text-lg text-gray-600">
+            Review onboarding data, KYC, and PEP statuses for every connected
+            client.
+          </p>
+          {clientsData && (
+            <p className="mt-4 text-sm text-gray-500">
+              Showing {clients.length} of {totalClients} clients
+            </p>
+          )}
+        </header>
+      </div>
 
-      <section className="rounded-3xl border border-gray-200 bg-white px-8 py-8 shadow-sm">
+      <section>
         {isLoading && (
-          <p className="text-center text-gray-600">Loading Haystack clients…</p>
+          <div className="mx-auto max-w-5xl flex-col gap-8 px-6 py-10">
+            <p className="text-center text-gray-600">Loading Haystack clients…</p>
+          </div>
         )}
 
         {loadState === "error" && !isLoading && (
-          <div className="rounded-2xl border border-red-200 bg-red-50 px-4 py-3 text-sm text-red-700">
-            {error ?? "Unable to load Haystack clients. Please try again."}
+          <div className="mx-auto max-w-5xl flex-col gap-8 px-6 py-10">
+            <div className="rounded-2xl border border-red-200 bg-red-50 px-4 py-3 text-sm text-red-700">
+              {error ?? "Unable to load Haystack clients. Please try again."}
+            </div>
           </div>
         )}
 
         {!isLoading && !hasClients && loadState !== "error" && (
-          <p className="text-center text-gray-600">
-            No Haystack clients found.
-          </p>
+          <div className="mx-auto max-w-5xl flex-col gap-8 px-6 py-10">
+            <p className="text-center text-gray-600">
+              No Haystack clients found.
+            </p>
+          </div>
         )}
 
         {hasClients && (
-          <ul className="space-y-6">
+          <ul className="space-y-1">
             {clients.map((client) => (
               <HSClientCard key={client.id} client={client} />
             ))}

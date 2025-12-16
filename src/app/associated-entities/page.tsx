@@ -13,22 +13,25 @@ import {
 } from "@/components/Dialog";
 import { TextField } from "@/components/TextField";
 import { Tabs, TabsContent, TabsList, TabsTrigger } from "@/components/Tabs";
-import { AssociatedEntitySections } from "@/features/associated-entities/AssociatedEntitySections";
-import { ShareholderStructure } from "@/features/associated-entities/ShareholderStructure";
-import { AddIndividual } from "@/features/associated-entities/AddIndividual";
-import { AddCorporate } from "@/features/associated-entities/AddCorporate";
-import { EditIndividual } from "@/features/associated-entities/EditIndividual";
-import { EditCorporate } from "@/features/associated-entities/EditCorporate";
-import { MakeShareholder } from "@/features/associated-entities/MakeShareholder";
-import { MakeUser } from "@/features/associated-entities/MakeUser";
-import { IndirectShareholdingDialog } from "@/features/associated-entities/IndirectShareholdingDialog";
+import { 
+  AssociatedEntitySections,
+  ShareholderStructure,
+  AddIndividual,
+  AddCorporate,
+  EditIndividual,
+  EditCorporate,
+  MakeShareholder,
+  MakeUser,
+  IndirectShareholdingDialog
+ } from "@/features/associated-entities/components";
+ 
 import type {
   AssociatedEntity,
   CorporateAssociatedEntity,
   DialogType,
   EntitySectionAffiliation,
   IndividualAssociatedEntity,
-} from "@/types";
+} from "@/features/associated-entities";
 import { useApiKey } from "@/context/api-key";
 
 const isIndividualEntity = (

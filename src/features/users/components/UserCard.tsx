@@ -3,7 +3,7 @@
 import * as React from "react";
 import { useRouter } from "next/navigation";
 
-import { IUser } from "@/types/users";
+import { IUser } from "@/features/users";
 
 interface UserCardProps {
   user: IUser;

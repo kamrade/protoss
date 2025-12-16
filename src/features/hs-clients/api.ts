@@ -9,10 +9,17 @@ const defaultHeaders = (apiKey: string) => ({
   "x-tenant-id": DEFAULT_TENANT_ID,
 });
 
+type SortField = 'companyName' | 'status' | 'createdDate' | 'kycStatus' | 'pepStatus';
+type SortDirection = 'asc' | 'desc';
+
 export async function getHSClients(
-  apiKey: string
+  apiKey: string,
+  sortField: SortField = 'createdDate',
+  sortDirection: SortDirection = 'desc'
 ): Promise<IHSClientResponse> {
-  const response = await fetch(HS_CLIENTS_ENDPOINT, {
+
+  const url = HS_CLIENTS_ENDPOINT + "?" + `sort=${sortField},${sortDirection}`
+  const response = await fetch(url, {
     method: "GET",
     headers: defaultHeaders(apiKey),
     cache: "no-store",

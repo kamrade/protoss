@@ -23,3 +23,5 @@ export const entitySections = [
     options: [{ label: "Individual", type: "individual" }],
   },
 ] as const;
+
+export * from './sections';

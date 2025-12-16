@@ -1,0 +1,10 @@
+export type PEPStatus = 
+'NOT_PERFORMED'
+| 'ERROR'
+| 'IN_PROGRESS'
+| 'ACTION_REQUIRED'
+| 'IN_REVIEW'
+| 'CLEAR'
+| 'FALSE_POSITIVE'
+| 'REJECTED'
+| 'ACCEPTED';
