@@ -1,4 +1,4 @@
-import { IHSClientResponse } from "@/types/hs-clients";
+import { IHSClientResponse } from "@/features/hs-clients";
 
 const HS_CLIENTS_ENDPOINT =
   "http://localhost:3030/api/v1/hs-clients";
@@ -9,16 +9,19 @@ const defaultHeaders = (apiKey: string) => ({
   "x-tenant-id": DEFAULT_TENANT_ID,
 });
 
-type SortField = 'companyName' | 'status' | 'createdDate' | 'kycStatus' | 'pepStatus';
-type SortDirection = 'asc' | 'desc';
+export type SortField = 'companyName' | 'status' | 'createdDate' | 'kycStatus' | 'pepStatus';
+export type SortDirection = 'asc' | 'desc';
 
 export async function getHSClients(
   apiKey: string,
   sortField: SortField = 'createdDate',
-  sortDirection: SortDirection = 'desc'
+  sortDirection: SortDirection = 'desc',
+  search: string = ''
 ): Promise<IHSClientResponse> {
 
-  const url = HS_CLIENTS_ENDPOINT + "?" + `sort=${sortField},${sortDirection}`
+  const url = HS_CLIENTS_ENDPOINT 
+    + `?sort=${sortField},${sortDirection}` 
+    + (search ? '&search=' + search : '');
   const response = await fetch(url, {
     method: "GET",
     headers: defaultHeaders(apiKey),

@@ -4,9 +4,10 @@ import * as React from "react";
 import Link from "next/link";
 
 import { useApiKey } from "@/context/api-key";
-import { getHSClients } from "@/features/hs-clients/api";
+import { getHSClients, type SortField, type SortDirection } from "@/features/hs-clients/api";
 import { HSClientCard } from "@/features/hs-clients/components/HSClientCard";
-import { IHSClientResponse } from "@/types/hs-clients";
+import { IHSClientResponse } from "@/features/hs-clients";
+import { Select, SelectTrigger, SelectValue, SelectContent, SelectItem } from "@/components/Select";
 
 type LoadState = "idle" | "loading" | "error";
 
@@ -17,6 +18,10 @@ export default function HSClientsPage() {
   );
   const [loadState, setLoadState] = React.useState<LoadState>("idle");
   const [error, setError] = React.useState<string | null>(null);
+
+  // Sort state
+  const [sortField, setSortField] = React.useState<SortField>("createdDate");
+  const [sortDirection, setSortDirection] = React.useState<SortDirection>("desc");
 
   React.useEffect(() => {
     if (!apiKey) {
@@ -30,7 +35,7 @@ export default function HSClientsPage() {
     setLoadState("loading");
     setError(null);
 
-    getHSClients(apiKey)
+    getHSClients(apiKey, sortField, sortDirection)
       .then((data) => {
         if (!isActive) {
           return;
@@ -54,7 +59,7 @@ export default function HSClientsPage() {
     return () => {
       isActive = false;
     };
-  }, [apiKey]);
+  }, [apiKey, sortField, sortDirection]);
 
   if (!apiKey) {
     return (
@@ -97,6 +102,43 @@ export default function HSClientsPage() {
               Showing {clients.length} of {totalClients} clients
             </p>
           )}
+
+          {/* Sort controls */}
+          <div className="mt-6 flex flex-wrap items-center gap-4">
+            <div className="flex-1 md:flex-none">
+              <p className="text-xs font-semibold uppercase tracking-[0.25em] text-gray-500">
+                Sort by
+              </p>
+              <div className="mt-2 flex gap-2">
+                <div className="w-44">
+                  <Select value={sortField} onValueChange={(v) => setSortField(v as SortField)}>
+                    <SelectTrigger>
+                      <SelectValue placeholder="Field" />
+                    </SelectTrigger>
+                    <SelectContent>
+                      <SelectItem value="companyName">Company name</SelectItem>
+                      <SelectItem value="status">Status</SelectItem>
+                      <SelectItem value="createdDate">Created date</SelectItem>
+                      <SelectItem value="kycStatus">KYC status</SelectItem>
+                      <SelectItem value="pepStatus">PEP status</SelectItem>
+                    </SelectContent>
+                  </Select>
+                </div>
+
+                <div className="w-36">
+                  <Select value={sortDirection} onValueChange={(v) => setSortDirection(v as SortDirection)}>
+                    <SelectTrigger>
+                      <SelectValue placeholder="Direction" />
+                    </SelectTrigger>
+                    <SelectContent>
+                      <SelectItem value="asc">Ascending</SelectItem>
+                      <SelectItem value="desc">Descending</SelectItem>
+                    </SelectContent>
+                  </Select>
+                </div>
+              </div>
+            </div>
+          </div>
         </header>
       </div>
 
