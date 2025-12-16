@@ -4,6 +4,7 @@ import { Geist, Geist_Mono } from "next/font/google";
 
 import { ApiKeyProvider } from "@/context/api-key";
 import "./globals.css";
+import { Notifications } from "@/components/Notifications/Notifications";
 
 const geistSans = Geist({
   variable: "--font-geist-sans",
@@ -51,6 +52,13 @@ export default function RootLayout({
                   Showcase
                 </Link>
               </nav>
+
+              <div className="flex items-center gap-2">
+                {/* Notifications sheet */}
+                <div className="hidden sm:block">
+                  <Notifications />
+                </div>
+              </div>
             </div>
           </header>
           {children}
