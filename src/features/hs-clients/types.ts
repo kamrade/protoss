@@ -1,22 +1,6 @@
 import { KYCStatus } from "../kyc";
 import { PEPStatus } from "../pep";
-
-export interface ISort {
-  ascending: boolean;
-  descending: boolean;
-  direction: 'ASC' | 'DESC';
-  ignoreCase: boolean;
-  nullHandling: 'NATIVE';
-  property: string;
-}
-
-export interface IPagination {
-  offset: number;
-  pageNumber: number;
-  pageSize: number;
-  paged: true;
-  sort: ISort[];
-}
+import type { IPagination, ISort } from '@/features/common-types';
 
 export interface IHSClient {
   companyName: string;
