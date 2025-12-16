@@ -43,6 +43,7 @@ export interface IHSClientResponse {
   totalPages: number;
 }
 
+// получаем для Overview
 export interface IHSClientOverview {
   applications: string[];
   businessAddress: string;
@@ -67,6 +68,7 @@ export interface IHSClientOverview {
   tenantId: number;
 }
 
+// Получаем для отрисовки странички Client
 export interface IApplication {
   categoryId: number;
   companyName: string;
@@ -89,4 +91,18 @@ export interface IApplication {
   riskStatus: string; // TYPE "NOT_PERFORMED"
   salesManager: string;
   version: number;
+}
+
+export interface IApplicationsResponse {
+  content: IApplication[];
+  empty: boolean;
+  first: boolean;
+  last: boolean;
+  number: number;
+  numberOfElements: number;
+  pageable: IPagination;
+  size: number;
+  sort: ISort;
+  totalElements: number;
+  totalPages: number;
 }

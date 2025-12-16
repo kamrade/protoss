@@ -4,7 +4,8 @@ import * as React from "react";
 import Link from "next/link";
 
 import { useApiKey } from "@/context/api-key";
-import { getHSClients, type SortField, type SortDirection } from "@/features/hs-clients/api";
+import { getHSClients, type SortField } from "@/features/hs-clients/api";
+import { type SortDirection } from '@/features/common-types';
 import { HSClientCard } from "@/features/hs-clients/components/HSClientCard";
 import { IHSClientResponse } from "@/features/hs-clients";
 import { Select, SelectTrigger, SelectValue, SelectContent, SelectItem } from "@/components/Select";
