@@ -51,7 +51,7 @@ export function Notifications() {
         </IconButton>
       </SheetTrigger>
 
-      <SheetContent className="max-w-md">
+      <SheetContent className="max-w-md" style={{ overflowY: 'scroll' }}>
         <SheetHeader>
           <SheetTitle>Notifications</SheetTitle>
           <SheetDescription>Open cases and recent activity.</SheetDescription>
