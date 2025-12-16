@@ -74,7 +74,7 @@ export function SelectShowcase() {
               </Select>
             </div>
           </div>
-          <Button>Save</Button>
+          <Button size='lg'>Save</Button>
         </div>
       </div>
     </section>

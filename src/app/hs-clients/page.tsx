@@ -8,6 +8,8 @@ import { getHSClients, type SortField, type SortDirection } from "@/features/hs-
 import { HSClientCard } from "@/features/hs-clients/components/HSClientCard";
 import { IHSClientResponse } from "@/features/hs-clients";
 import { Select, SelectTrigger, SelectValue, SelectContent, SelectItem } from "@/components/Select";
+import { TextField } from "@/components/TextField";
+import { MagnifyingGlassIcon } from "@radix-ui/react-icons";
 
 type LoadState = "idle" | "loading" | "error";
 
@@ -23,6 +25,16 @@ export default function HSClientsPage() {
   const [sortField, setSortField] = React.useState<SortField>("createdDate");
   const [sortDirection, setSortDirection] = React.useState<SortDirection>("desc");
 
+  // Search state (debounced)
+  const [searchInput, setSearchInput] = React.useState<string>("");
+  const [search, setSearch] = React.useState<string>("");
+
+  // debounce search input
+  React.useEffect(() => {
+    const t = setTimeout(() => setSearch(searchInput), 400);
+    return () => clearTimeout(t);
+  }, [searchInput]);
+
   React.useEffect(() => {
     if (!apiKey) {
       setClientsData(null);
@@ -35,7 +47,7 @@ export default function HSClientsPage() {
     setLoadState("loading");
     setError(null);
 
-    getHSClients(apiKey, sortField, sortDirection)
+    getHSClients(apiKey, sortField, sortDirection, search)
       .then((data) => {
         if (!isActive) {
           return;
@@ -59,7 +71,7 @@ export default function HSClientsPage() {
     return () => {
       isActive = false;
     };
-  }, [apiKey, sortField, sortDirection]);
+  }, [apiKey, sortField, sortDirection, search]);
 
   if (!apiKey) {
     return (
@@ -103,38 +115,47 @@ export default function HSClientsPage() {
             </p>
           )}
 
-          {/* Sort controls */}
+          {/* Search + Sort controls */}
           <div className="mt-6 flex flex-wrap items-center gap-4">
-            <div className="flex-1 md:flex-none">
-              <p className="text-xs font-semibold uppercase tracking-[0.25em] text-gray-500">
-                Sort by
-              </p>
-              <div className="mt-2 flex gap-2">
-                <div className="w-44">
-                  <Select value={sortField} onValueChange={(v) => setSortField(v as SortField)}>
-                    <SelectTrigger>
-                      <SelectValue placeholder="Field" />
-                    </SelectTrigger>
-                    <SelectContent>
-                      <SelectItem value="companyName">Company name</SelectItem>
-                      <SelectItem value="status">Status</SelectItem>
-                      <SelectItem value="createdDate">Created date</SelectItem>
-                      <SelectItem value="kycStatus">KYC status</SelectItem>
-                      <SelectItem value="pepStatus">PEP status</SelectItem>
-                    </SelectContent>
-                  </Select>
-                </div>
+            <div className="flex-1 min-w-0">
+              <TextField
+                value={searchInput}
+                onChange={(e) => setSearchInput(e.target.value)}
+                placeholder="Search clients"
+                leadingVisual={<MagnifyingGlassIcon className="h-4 w-4" />}
+                wrapperClassName="w-full"
+              />
+            </div>
 
-                <div className="w-36">
-                  <Select value={sortDirection} onValueChange={(v) => setSortDirection(v as SortDirection)}>
-                    <SelectTrigger>
-                      <SelectValue placeholder="Direction" />
-                    </SelectTrigger>
-                    <SelectContent>
-                      <SelectItem value="asc">Ascending</SelectItem>
-                      <SelectItem value="desc">Descending</SelectItem>
-                    </SelectContent>
-                  </Select>
+            <div className="flex-none md:flex items-center gap-4">
+              <div className="flex-1 md:flex-none">
+                <div className="flex gap-2">
+                  <div className="w-44">
+                    <Select value={sortField} onValueChange={(v) => setSortField(v as SortField)}>
+                      <SelectTrigger>
+                        <SelectValue placeholder="Field" />
+                      </SelectTrigger>
+                      <SelectContent>
+                        <SelectItem value="companyName">Company name</SelectItem>
+                        <SelectItem value="status">Status</SelectItem>
+                        <SelectItem value="createdDate">Created date</SelectItem>
+                        <SelectItem value="kycStatus">KYC status</SelectItem>
+                        <SelectItem value="pepStatus">PEP status</SelectItem>
+                      </SelectContent>
+                    </Select>
+                  </div>
+
+                  <div className="w-36">
+                    <Select value={sortDirection} onValueChange={(v) => setSortDirection(v as SortDirection)}>
+                      <SelectTrigger>
+                        <SelectValue placeholder="Direction" />
+                      </SelectTrigger>
+                      <SelectContent>
+                        <SelectItem value="asc">Ascending</SelectItem>
+                        <SelectItem value="desc">Descending</SelectItem>
+                      </SelectContent>
+                    </Select>
+                  </div>
                 </div>
               </div>
             </div>

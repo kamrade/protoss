@@ -16,12 +16,16 @@ export async function getHSClients(
   apiKey: string,
   sortField: SortField = 'createdDate',
   sortDirection: SortDirection = 'desc',
-  search: string = ''
+  search: string = '',
+  page: number = 0,
+  size: number = 80
 ): Promise<IHSClientResponse> {
 
   const url = HS_CLIENTS_ENDPOINT 
     + `?sort=${sortField},${sortDirection}` 
-    + (search ? '&search=' + search : '');
+    + (search ? '&search=' + search : '')
+    + `page=${page}`
+    + `size=${size}`;
   const response = await fetch(url, {
     method: "GET",
     headers: defaultHeaders(apiKey),
