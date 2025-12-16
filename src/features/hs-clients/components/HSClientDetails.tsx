@@ -25,6 +25,7 @@ export function HSClientDetails({ clientId }: Props) {
 
     getHSClients({ apiKey, clientId })
       .then((data) => {
+        console.log(data);
         if (!active) return;
         setClient(data as IHSClientOverview);
         setLoading(false);
@@ -78,7 +79,7 @@ export function HSClientDetails({ clientId }: Props) {
         <header className="py-6 border-b-1 border-gray-300">
           <Link href="/hs-clients" className="text-sm text-gray-500 underline">← Back to clients</Link>
           <h1 className="mt-4 text-4xl font-semibold text-gray-900">{client.companyName}</h1>
-          <p className="mt-2 text-sm text-gray-500">Created: {new Date(client.createdDate).toLocaleString()}</p>
+          <p className="mt-2 text-sm text-gray-500">Created: {new Date(client.createdDate).toLocaleString()} by {client.createdByName}</p>
 
           <div className="mt-4 flex gap-3">
             <Badge variant="subtle">{client.status}</Badge>
