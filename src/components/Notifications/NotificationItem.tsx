@@ -10,33 +10,36 @@ interface NotificationItemProps {
 export function NotificationItem({ item }: NotificationItemProps) {
 
   const createdAt = React.useMemo(() => {
-    return new Date(item.createdDateTime).toLocaleDateString("en-GB", {
-      day: "numeric",
-      month: "long",
+    return new Date(item.createdDateTime).toLocaleTimeString("en-GB", {
+      hour: "2-digit",
+      minute: "2-digit",
     });
   }, [item.createdDateTime]);
 
   return (
-    <li className="py-3">
-      <div className="NotificationItem flex items-start justify-between gap-4">
-        <div>
-          <p className="text-sm text-gray-900">{item.caseMetaData.companyName}</p>
+    <li className="my-1">
+      <div className="NotificationItem rounded-2xl border border-gray-100 bg-white px-4 py-3 shadow-sm">
+        <div className="flex items-start justify-between gap-4">
+          <div>
+            <p className="text-sm font-medium text-gray-900">
+              {createdAt} : {item.description}
+            </p>
 
-          <p className="text-xs text-gray-500">
-            {item.description}
-          </p>
+            <p className="mt-1 text-xs text-gray-600">
+              {item.caseMetaData.companyName}
+            </p>
+          </div>
 
+          {item.caseMetaData.haystackClientId && (
+            <Link
+              href={`/hs-clients/${item.caseMetaData.haystackClientId}`}
+              className="text-gray-400 transition hover:text-gray-600"
+              aria-label="Open haystack client"
+            >
+              <ArrowRightUpLineIcon className="h-5 w-5" />
+            </Link>
+          )}
         </div>
-
-        {item.caseMetaData.haystackClientId && (
-          <Link
-            href={`/hs-clients/${item.caseMetaData.haystackClientId}`}
-            className="text-gray-400 hover:text-gray-600"
-            aria-label="Open haystack client"
-          >
-            <ArrowRightUpLineIcon className="h-5 w-5" />
-          </Link>
-        )}
       </div>
     </li>
   );

@@ -8,6 +8,7 @@ import { useApiKey } from "@/context/api-key";
 import { getCases } from "@/features/cases/api/get-cases";
 import type { ICase, ICaseResponse } from "@/features/cases";
 import { Button } from "@/components/Button";
+import { Badge } from "@/components/Badge/Badge";
 import { NotificationItem } from "./NotificationItem";
 
 type CaseGroup = {
@@ -124,9 +125,9 @@ export function Notifications() {
             <div className="mt-2 space-y-6">
               {groupedCases.map((group) => (
                 <div key={group.dateKey}>
-                  <p className="text-xs font-semibold uppercase text-gray-500">
+                  <Badge variant="subtle" className="text-xs text-gray-600">
                     {group.label}
-                  </p>
+                  </Badge>
                   <ul>
                     {group.items.map((item) => (
                       <NotificationItem key={item.caseId} item={item} />
