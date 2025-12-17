@@ -8,6 +8,7 @@ import { useApiKey } from "@/context/api-key";
 import { getCases } from "@/features/cases/api/get-cases";
 import type { ICaseResponse } from "@/features/cases";
 import { Button } from "@/components/Button";
+import { NotificationItem } from "./NotificationItem";
 
 export function Notifications() {
   const { apiKey } = useApiKey();
@@ -51,14 +52,14 @@ export function Notifications() {
         </IconButton>
       </SheetTrigger>
 
-      <SheetContent className="max-w-md" style={{ overflowY: 'auto', overflowX: 'hidden' }}>
+      <SheetContent className="max-w-md overflow-y-auto overflow-x-hidden">
         <SheetHeader>
           <SheetTitle>Notifications</SheetTitle>
           <SheetDescription>Open cases and recent activity.</SheetDescription>
         </SheetHeader>
 
         <div className="mt-4">
-          {loading && <p className="text-sm text-gray-600">Loading cases…</p>}
+          {loading && <p className="text-sm text-gray-600">Loading cases...</p>}
           {error && (
             <div className="rounded-2xl border border-red-200 bg-red-50 px-4 py-3 text-sm text-red-700">
               {error}
@@ -68,18 +69,7 @@ export function Notifications() {
           {!loading && !error && cases && (
             <ul className="mt-2 divide-y divide-gray-100">
               {cases.content.map((c) => (
-                <li key={c.caseId} className="py-3">
-                  <div className="flex items-start justify-between">
-                    <div>
-                      <p className="text-sm font-semibold text-gray-900">{c.caseMetaData.companyName}</p>
-                      <p className="text-sm text-gray-500">{c.caseType} — {c.caseStatus}</p>
-                    </div>
-                    <div className="text-right text-sm text-gray-500">
-                      <div>{new Date(c.createdDateTime).toLocaleString()}</div>
-                      <div className="text-xs">ID: <span className="font-mono">{c.caseId}</span></div>
-                    </div>
-                  </div>
-                </li>
+                <NotificationItem key={c.caseId} item={c} />
               ))}
             </ul>
           )}
