@@ -23,17 +23,9 @@ export function NotificationItem({ item }: NotificationItemProps) {
           <p className="text-sm text-gray-900">{item.caseMetaData.companyName}</p>
 
           <p className="text-xs text-gray-500">
-            {createdAt}
-          </p>
-
-          <p className="text-xs text-gray-500">
             {item.description}
           </p>
-          
-          {/* <p className="text-sm text-gray-500">
-            {item.caseType}
-            {item.caseStatus}
-          </p> */}
+
         </div>
 
         {item.caseMetaData.haystackClientId && (
