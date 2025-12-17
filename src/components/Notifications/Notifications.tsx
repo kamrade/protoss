@@ -26,7 +26,7 @@ export function Notifications() {
       const data = await getCases({
         apiKey,
         page: 0,
-        size: 20,
+        size: 200,
         caseStatus: "OPEN",
         caseType: "APPLICATION",
       });
@@ -68,9 +68,15 @@ export function Notifications() {
 
           {!loading && !error && cases && (
             <ul className="mt-2 divide-y divide-gray-100">
-              {cases.content.map((c) => (
-                <NotificationItem key={c.caseId} item={c} />
-              ))}
+              {cases.content.map((c) => {
+                if (c?.caseMetaData?.applicationCaseType !== 'UPDATED_NOTE' && c?.caseMetaData?.applicationCaseType !== 'NEW_NOTE') {
+                  return (
+                    <NotificationItem key={c.caseId} item={c} />
+                  )
+                } else {
+                  return null;
+                }
+              })}
             </ul>
           )}
 
