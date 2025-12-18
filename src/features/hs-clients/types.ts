@@ -1,6 +1,6 @@
 import { KYCStatus } from "../kyc";
 import { PEPStatus } from "../pep";
-import type { IPagination, ISort } from '@/features/common-types';
+import type { IPagination, ISort, IBaseEntity } from '@/features/common-types';
 
 export interface IHSClient {
   companyName: string;
@@ -28,7 +28,7 @@ export interface IHSClientResponse {
 }
 
 // получаем для Overview
-export interface IHSClientOverview {
+export interface IHSClientOverview extends IBaseEntity {
   applications: string[];
   businessAddress: string;
   categoryId: number;
@@ -40,9 +40,6 @@ export interface IHSClientOverview {
   contactPhone: string;
   contactPosition: string;
   contactTitle: string;
-  createdBy: string;
-  createdByName: string;
-  createdDate: string;
   id: string;
   referralPartner: string;
   relationshipManagerEmail: string;
@@ -53,12 +50,9 @@ export interface IHSClientOverview {
 }
 
 // Получаем для отрисовки странички Client
-export interface IApplication {
+export interface IApplication extends IBaseEntity {
   categoryId: number;
   companyName: string;
-  createdBy: string;
-  createdByName: string;
-  createdDate: string;
   haystackClientId: string;
   id: string;
   isIdle: boolean;
@@ -66,9 +60,6 @@ export interface IApplication {
   kind: string; // TYPING "LIVE_PROFILE"
   kycStatus: KYCStatus;
   mainStatus: string; // TYPE "PENDING_ON_CUSTOMER"
-  modifiedBy: string;
-  modifiedByName: string;
-  modifiedDate: string;
   number: string;
   pepStatus: PEPStatus;
   riskScoringVersion: number;
@@ -89,4 +80,30 @@ export interface IApplicationsResponse {
   sort: ISort;
   totalElements: number;
   totalPages: number;
+}
+
+// NOTES
+export interface ICaseDocument extends IBaseEntity {
+  id: string;
+  tenantId: number;
+  nodeId: string;
+  fileName: string;
+  fileSize: number;
+  contentType: string; // TYPE
+  uploadedDate: string;
+  uploadedBy: string;
+  uploadedByName: string;
+  visueStatus: string; // TYPE
+}
+
+export interface INote extends IBaseEntity {
+  id: string;
+  tenantId: number;
+  applicationId: string;
+  title: string;
+  text: string;
+  isSummary: boolean;
+  isDraft: boolean;
+  isInternal: boolean;
+  document: ICaseDocument[];
 }

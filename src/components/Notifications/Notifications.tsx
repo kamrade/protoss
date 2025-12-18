@@ -2,12 +2,11 @@
 
 import * as React from "react";
 import { IconButton } from "@/components/IconButton";
-import { BellIcon } from "@radix-ui/react-icons";
+import { BellIcon, Cross2Icon } from "@radix-ui/react-icons";
 import { Sheet, SheetTrigger, SheetContent, SheetHeader, SheetTitle, SheetDescription, SheetFooter, SheetClose } from "@/components/Sheet";
 import { useApiKey } from "@/context/api-key";
 import { getCases } from "@/features/cases/api/get-cases";
 import type { ICase, ICaseResponse } from "@/features/cases";
-import { Button } from "@/components/Button";
 import { Badge } from "@/components/Badge/Badge";
 import { NotificationItem } from "./NotificationItem";
 
@@ -109,8 +108,17 @@ export function Notifications() {
 
       <SheetContent className="max-w-md overflow-y-auto overflow-x-hidden">
         <SheetHeader>
-          <SheetTitle>Notifications</SheetTitle>
-          <SheetDescription>Open cases and recent activity.</SheetDescription>
+          <div className="flex items-start justify-between gap-4">
+            <div>
+              <SheetTitle>Notifications</SheetTitle>
+              <SheetDescription>Open cases and recent activity.</SheetDescription>
+            </div>
+            <SheetClose asChild>
+              <IconButton aria-label="Close notifications">
+                <Cross2Icon />
+              </IconButton>
+            </SheetClose>
+          </div>
         </SheetHeader>
 
         <div className="mt-8">
@@ -142,19 +150,6 @@ export function Notifications() {
             <p className="text-sm text-gray-600">No open cases.</p>
           )}
         </div>
-
-        <SheetFooter>
-          <div className="flex w-full justify-between">
-            <Button asChild>
-              <a href="/cases">View all cases</a>
-            </Button>
-            <div className="flex gap-2">
-              <SheetClose asChild>
-                <Button variant="secondary">Close</Button>
-              </SheetClose>
-            </div>
-          </div>
-        </SheetFooter>
       </SheetContent>
     </Sheet>
   );
