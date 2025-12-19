@@ -63,11 +63,6 @@ export default function ClientPageLayout({ children } : {
     };
   }, [apiKey, clientId]);
 
-  React.useEffect(() => {
-    console.log(client);
-    console.log(applications);
-  }, [applications]);
-
   if (!apiKey) {
     return (
       <div className="mx-auto max-w-3xl px-6 py-10 text-center">
