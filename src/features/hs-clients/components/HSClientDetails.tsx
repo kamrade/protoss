@@ -3,8 +3,12 @@
 import * as React from "react";
 import Link from "next/link";
 import { useApiKey } from "@/context/api-key";
-import { getHSClients } from "@/features/hs-clients/api";
-import { IHSClientOverview } from "@/features/hs-clients";
+import { getHSClients, getHSApplications } from "@/features/hs-clients/api";
+import { 
+  IHSClientOverview, 
+  IApplication, 
+  getCategoryShortNameById 
+} from "@/features/hs-clients";
 import { Badge } from "@/components/Badge";
 
 interface Props {
@@ -14,6 +18,7 @@ interface Props {
 export function HSClientDetails({ clientId }: Props) {
   const { apiKey } = useApiKey();
   const [client, setClient] = React.useState<IHSClientOverview | null>(null);
+  const [applications, setApplications] = React.useState<IApplication[]>([]);
   const [loading, setLoading] = React.useState(false);
   const [error, setError] = React.useState<string | null>(null);
 
@@ -22,24 +27,44 @@ export function HSClientDetails({ clientId }: Props) {
     let active = true;
     setLoading(true);
     setError(null);
+    setApplications([]);
 
-    getHSClients({ apiKey, clientId })
-      .then((data) => {
-        console.log(data);
+    (async () => {
+      try {
+        const clientData = (await getHSClients({ apiKey, clientId })) as IHSClientOverview;
         if (!active) return;
-        setClient(data as IHSClientOverview);
-        setLoading(false);
-      })
-      .catch((err) => {
+        setClient(clientData);
+
+        const applicationsResponse = await getHSApplications(
+          apiKey,
+          "createdDate",
+          "desc",
+          "",
+          0,
+          80,
+          clientData.id
+        );
+        if (!active) return;
+        setApplications(applicationsResponse.content);
+      } catch (err) {
         if (!active) return;
         setError(err instanceof Error ? err.message : String(err));
-        setLoading(false);
-      });
+      } finally {
+        if (active) {
+          setLoading(false);
+        }
+      }
+    })();
 
     return () => {
       active = false;
     };
   }, [apiKey, clientId]);
+
+  React.useEffect(() => {
+    console.log(client);
+    console.log(applications);
+  }, [client, applications]);
 
   if (!apiKey) {
     return (
@@ -110,9 +135,13 @@ export function HSClientDetails({ clientId }: Props) {
             <div className="mt-6">
               <p className="text-xs text-gray-500">Applications</p>
               <ul className="mt-2 grid gap-2">
-                {client.applications.map((a) => (
-                  <li key={a} className="inline-flex items-center gap-2">
-                    <span className="text-sm text-gray-700">{a}</span>
+                {applications.map((app) => (
+                  <li key={app.id} className="inline-flex flex-col gap-0.5">
+                    <span className="text-sm text-gray-700">{app.number}</span>
+                    <span className="text-xs text-gray-500">{app.kind}</span>
+                    { app.categoryId && 
+                      <span className="text-xs text-gray-500">{getCategoryShortNameById(app.categoryId)}</span>
+                    }
                   </li>
                 ))}
               </ul>
