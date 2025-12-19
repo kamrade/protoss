@@ -6,6 +6,7 @@ import { useParams } from "next/navigation";
 import { useApiKey } from "@/context/api-key";
 import { getApplicationNotes } from "@/features/hs-clients/api/get-notes";
 import type { INote } from "@/features/hs-clients";
+import { decodeNoteText } from "@/utils";
 
 export default function HSApplicationNotesPage() {
   const { apiKey } = useApiKey();
@@ -92,9 +93,13 @@ export default function HSApplicationNotesPage() {
                   {note.isDraft && <span>Draft</span>}
                 </div>
               </div>
-              <p className="mt-4 whitespace-pre-wrap text-sm text-gray-700">
-                {note.text || "No description provided."}
-              </p>
+              <div
+                className="prose prose-sm mt-4 max-w-none break-words text-gray-700"
+                style={{ overflowWrap: "anywhere" }}
+                dangerouslySetInnerHTML={{
+                  __html: decodeNoteText(note.text) || "<p>No description provided.</p>",
+                }}
+              />
 
               {note.document && note.document.length > 0 && (
                 <div className="mt-4">
