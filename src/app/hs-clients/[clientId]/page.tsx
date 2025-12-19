@@ -1,5 +1,3 @@
-import { HSClientDetails } from "@/features/hs-clients/components/HSClientDetails";
-
 interface RawParams {
   clientId: string;
 }
@@ -16,5 +14,4 @@ export default async function ClientPage({ params }: Props) {
   const clientId = resolvedParams?.clientId;
 
   return null;
-  return <HSClientDetails clientId={clientId} />;
 }

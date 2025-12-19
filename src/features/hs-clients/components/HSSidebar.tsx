@@ -9,7 +9,7 @@ interface HSSidebarProps {
 
 export function HSSidebar({ children }: HSSidebarProps) {
   return (
-    <nav className="w-full md:w-64 shrink-0 rounded-2xl border border-gray-200 bg-white p-4">
+    <nav className="w-full md:w-64 shrink-0 bg-white">
       <div className="space-y-2">{children}</div>
     </nav>
   );
@@ -39,7 +39,7 @@ export function HSSidebarItem({ href, children, active }: HSSidebarItemProps) {
       href={href}
       className={`block rounded-xl px-3 py-2 text-sm transition-colors ${
         active
-          ? "bg-gray-900 text-white"
+          ? "bg-gray-100 text-gray-900"
           : "text-gray-700 hover:bg-gray-100 hover:text-gray-900"
       }`}
     >

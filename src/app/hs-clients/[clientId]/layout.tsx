@@ -64,6 +64,7 @@ export default function ClientPageLayout({ children } : {
   }, [apiKey, clientId]);
 
   React.useEffect(() => {
+    console.log(client);
     console.log(applications);
   }, [applications]);
 
@@ -101,6 +102,10 @@ export default function ClientPageLayout({ children } : {
 
   const overviewHref = `/hs-clients/${client.id}/overview`;
 
+  const getApplicationTitle = (app: IApplication) => {
+    return `${app.kind} ${app.categoryId ? getCategoryShortNameById(app.categoryId) : ''}`;
+  }
+
   return (
     <section className="ClientPageLayout">
 
@@ -131,8 +136,8 @@ export default function ClientPageLayout({ children } : {
             </HSSidebarItem>
             <HSSidebarSubtitle>Applications</HSSidebarSubtitle>
             
-            {applications.map((app) => (
-              <HSSidebarAccordion key={app.id} title={app.number}>
+            {applications.map((app: IApplication) => (
+              <HSSidebarAccordion key={app.id} title={getApplicationTitle(app)}>
                 <HSSidebarItem
                   href={`/hs-clients/${client.id}/applications/${app.id}/forms`}
                 >
@@ -142,6 +147,11 @@ export default function ClientPageLayout({ children } : {
                   href={`/hs-clients/${client.id}/applications/${app.id}/documents`}
                 >
                   Documents
+                </HSSidebarItem>
+                <HSSidebarItem
+                  href={`/hs-clients/${client.id}/applications/${app.id}/notes`}
+                >
+                  Notes
                 </HSSidebarItem>
               </HSSidebarAccordion>
             ))}
