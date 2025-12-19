@@ -1,4 +1,5 @@
 import { HSClientDetails } from "@/features/hs-clients/components/HSClientDetails";
+import { ClientPageLayout } from "@/features/hs-clients/components/ClientPageLayout";
 
 interface RawParams {
   clientId: string;
@@ -15,5 +16,9 @@ export default async function ClientPage({ params }: Props) {
 
   const clientId = resolvedParams?.clientId;
 
-  return <HSClientDetails clientId={clientId} />;
+  return (
+    <ClientPageLayout>
+      <HSClientDetails clientId={clientId} activeTab="overview" />
+    </ClientPageLayout>
+  );
 }
