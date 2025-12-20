@@ -17,6 +17,7 @@ import {
   HSSidebarItem,
   HSSidebarSubtitle,
 } from "@/features/hs-clients";
+import { ClientContextProvider } from "@/features/hs-clients/context/client-context";
 
 export default function ClientPageLayout({ children }: { children: React.ReactNode }) {
 
@@ -165,9 +166,11 @@ export default function ClientPageLayout({ children }: { children: React.ReactNo
        <main className="min-h-screen">
         <div className="mx-auto flex max-w-5xl flex-col gap-8 py-8 md:flex-row">
           <HSSidebar>
-            <HSSidebarItem href={overviewHref}>
-              Overview
-            </HSSidebarItem>
+            <div className="mb-4">
+              <HSSidebarItem href={overviewHref}>
+                Overview
+              </HSSidebarItem>
+            </div>
             <HSSidebarSubtitle>Applications</HSSidebarSubtitle>
             
             {applications.map((app: IApplication) => (
@@ -191,14 +194,11 @@ export default function ClientPageLayout({ children }: { children: React.ReactNo
             ))}
           </HSSidebar>
 
-          <div className="flex-1">
-            
-
-            <div>
-              {children}
+          <ClientContextProvider value={client}>
+            <div className="flex-1">
+              <div>{children}</div>
             </div>
-
-          </div>
+          </ClientContextProvider>
         </div>
       </main>
     </section>
