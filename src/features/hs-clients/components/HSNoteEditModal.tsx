@@ -6,6 +6,8 @@ import { decodeNoteText } from "@/utils";
 import { Button } from "@/components/Button";
 import { TextField } from "@/components/TextField";
 import { Checkbox } from "@/components/Checkbox";
+import { updateNote } from "@/features/hs-clients";
+import { useApiKey } from "@/context/api-key";
 import { EditorContent, useEditor } from "@tiptap/react";
 import StarterKit from "@tiptap/starter-kit";
 import {
@@ -34,6 +36,7 @@ interface HSNoteEditModalProps {
 }
 
 export function HSNoteEditModal({ open, onOpenChange, note }: HSNoteEditModalProps) {
+  const { apiKey } = useApiKey();
   const noteBodyHtml = React.useMemo(() => decodeNoteText(note.text), [note.text]);
   const placeholderHtml = "<p class='text-gray-400'>No content available</p>";
   const initialContent = noteBodyHtml || placeholderHtml;
@@ -41,6 +44,8 @@ export function HSNoteEditModal({ open, onOpenChange, note }: HSNoteEditModalPro
   const [title, setTitle] = React.useState(note.title ?? "");
   const [isInternal, setIsInternal] = React.useState(!!note.isInternal);
   const [isSummary, setIsSummary] = React.useState(!!note.isSummary);
+  const [isSaving, setIsSaving] = React.useState(false);
+  const [saveError, setSaveError] = React.useState<string | null>(null);
 
   const editor = useEditor({
     extensions: [StarterKit],
@@ -67,10 +72,46 @@ export function HSNoteEditModal({ open, onOpenChange, note }: HSNoteEditModalPro
     setIsSummary(!!note.isSummary);
   }, [note]);
 
-  const handleSave = React.useCallback(() => {
-    // TODO: wire this handler to persist editor content via API when available.
-    onOpenChange(false);
-  }, [onOpenChange]);
+  const handleSave = React.useCallback(async () => {
+    if (!editor) {
+      return;
+    }
+    if (!apiKey) {
+      setSaveError("API key is required to update a note.");
+      return;
+    }
+
+    const textContent = editor.getHTML();
+    setIsSaving(true);
+    setSaveError(null);
+
+    try {
+      await updateNote(apiKey, note.applicationId, note.id, {
+        isDraft: note.isDraft,
+        isInternal,
+        isSummary,
+        text: encodeNoteText(textContent),
+        title,
+      });
+      onOpenChange(false);
+    } catch (error) {
+      const message =
+        error instanceof Error ? error.message : "Failed to update the note.";
+      setSaveError(message);
+    } finally {
+      setIsSaving(false);
+    }
+  }, [
+    apiKey,
+    editor,
+    isInternal,
+    isSummary,
+    note.applicationId,
+    note.id,
+    note.isDraft,
+    onOpenChange,
+    title,
+  ]);
 
   return (
     <Dialog open={open} onOpenChange={onOpenChange}>
@@ -166,10 +207,15 @@ export function HSNoteEditModal({ open, onOpenChange, note }: HSNoteEditModalPro
           <DialogClose asChild>
             <Button variant="secondary">Cancel</Button>
           </DialogClose>
-          <Button onClick={handleSave} disabled={!editor}>
-            Save (UI only)
+          <Button onClick={handleSave} disabled={!editor || isSaving}>
+            {isSaving ? "Saving..." : "Save"}
           </Button>
         </DialogFooter>
+        {saveError && (
+          <div className="rounded-lg border border-red-200 bg-red-50 px-3 py-2 text-sm text-red-700">
+            {saveError}
+          </div>
+        )}
       </DialogContent>
     </Dialog>
   );
@@ -201,4 +247,21 @@ function ToolbarButton({ active, icon, label, ...props }: ToolbarButtonProps) {
       </span>
     </button>
   );
+}
+
+function encodeNoteText(content: string): string {
+  try {
+    if (typeof window === "undefined") {
+      return Buffer.from(content, "utf-8").toString("base64");
+    }
+    const encoder = new TextEncoder();
+    const bytes = encoder.encode(content);
+    let binary = "";
+    bytes.forEach((b) => {
+      binary += String.fromCharCode(b);
+    });
+    return window.btoa(binary);
+  } catch {
+    return content;
+  }
 }
