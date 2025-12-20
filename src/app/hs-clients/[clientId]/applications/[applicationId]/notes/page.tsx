@@ -71,7 +71,9 @@ export default function HSApplicationNotesPage() {
           {notes.map((note) => (
             <li
               key={note.id}
-              className="rounded-2xl border border-gray-200 bg-white p-5 shadow-sm"
+              className={`rounded-2xl border border-gray-200 p-5 shadow-sm ${
+                note.isInternal ? "bg-gray-50" : "bg-white"
+              }`}
             >
               <div className="flex flex-wrap items-center justify-between gap-2">
                 <div>
@@ -88,8 +90,16 @@ export default function HSApplicationNotesPage() {
                   </p>
                 </div>
                 <div className="flex flex-wrap gap-2 text-xs uppercase tracking-wide text-gray-500">
-                  {note.isSummary && <span>Summary</span>}
-                  {note.isInternal && <span>Internal</span>}
+                  {note.isSummary && (
+                    <span className="rounded-full bg-yellow-100 px-3 py-1 text-[10px] font-semibold uppercase tracking-wide text-yellow-900">
+                      Summary
+                    </span>
+                  )}
+                  {note.isInternal && (
+                    <span className="rounded-full bg-gray-200 px-3 py-1 text-[10px] font-semibold uppercase tracking-wide text-gray-800">
+                      Internal
+                    </span>
+                  )}
                   {note.isDraft && <span>Draft</span>}
                 </div>
               </div>
@@ -102,7 +112,7 @@ export default function HSApplicationNotesPage() {
               />
 
               {note.documents && note.documents.length > 0 && (
-                <div className="mt-4">
+                <div className="mt-5 rounded-xl border border-gray-100 bg-gray-50/60 p-4">
                   <p className="text-xs font-semibold uppercase tracking-wide text-gray-500">
                     Documents
                   </p>
