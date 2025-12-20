@@ -150,9 +150,9 @@ export default function ClientPageLayout({ children }: { children: React.ReactNo
       </div>
 
        <main className="min-h-screen">
-        <div className="mx-auto flex max-w-5xl flex-col gap-8 px-6 py-10 md:flex-row">
+        <div className="mx-auto flex max-w-5xl flex-col gap-8 py-8 md:flex-row">
           <HSSidebar>
-            <HSSidebarItem href={overviewHref} active>
+            <HSSidebarItem href={overviewHref}>
               Overview
             </HSSidebarItem>
             <HSSidebarSubtitle>Applications</HSSidebarSubtitle>

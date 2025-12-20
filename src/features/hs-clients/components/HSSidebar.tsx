@@ -2,6 +2,7 @@
 
 import * as React from "react";
 import Link from "next/link";
+import { usePathname } from "next/navigation";
 
 interface HSSidebarProps {
   children: React.ReactNode;
@@ -9,7 +10,7 @@ interface HSSidebarProps {
 
 export function HSSidebar({ children }: HSSidebarProps) {
   return (
-    <nav className="w-full md:w-64 shrink-0 bg-white">
+    <nav className="w-full md:w-64 shrink-0 bg-white border border-gray-200 p-3 rounded-xl">
       <div className="space-y-2">{children}</div>
     </nav>
   );
@@ -34,11 +35,14 @@ interface HSSidebarItemProps {
 }
 
 export function HSSidebarItem({ href, children, active }: HSSidebarItemProps) {
+  const pathname = usePathname();
+  const isActive = active ?? pathname === href;
+
   return (
     <Link
       href={href}
       className={`block rounded-xl px-3 py-2 text-sm transition-colors ${
-        active
+        isActive
           ? "bg-gray-100 text-gray-900"
           : "text-gray-700 hover:bg-gray-100 hover:text-gray-900"
       }`}
