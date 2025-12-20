@@ -118,7 +118,11 @@ export default function ClientPageLayout({ children } : {
           </p>
 
           <div className="mt-4 flex gap-3">
-            <Badge variant="subtle">{client.status}</Badge>
+            <Badge variant="subtle">
+              Status:
+              <span className="capitalize">{client.status.toLowerCase()}</span>
+            </Badge>
+            <Badge variant="subtle">Reload data</Badge>
           </div>
         </header>
       </div>
