@@ -7,6 +7,7 @@ import { useApiKey } from "@/context/api-key";
 import { getApplicationNotes } from "@/features/hs-clients/api/get-notes";
 import type { INote } from "@/features/hs-clients";
 import { decodeNoteText } from "@/utils";
+import { Checkbox } from "@/components/Checkbox";
 
 export default function HSApplicationNotesPage() {
   const { apiKey } = useApiKey();
@@ -15,6 +16,7 @@ export default function HSApplicationNotesPage() {
   const [notes, setNotes] = React.useState<INote[] | null>(null);
   const [loading, setLoading] = React.useState(false);
   const [error, setError] = React.useState<string | null>(null);
+  const [hideInternal, setHideInternal] = React.useState(false);
 
   React.useEffect(() => {
     if (!apiKey || !applicationId) {
@@ -47,13 +49,21 @@ export default function HSApplicationNotesPage() {
 
   return (
     <main className="mx-auto max-w-5xl px-6 space-y-6">
-      <header>
-        <p className="text-sm uppercase tracking-[0.2em] text-gray-500">
-          Notes
-        </p>
-        <h1 className="mt-2 text-3xl font-semibold text-gray-900">
-          Application {applicationId}
-        </h1>
+      <header className="space-y-4">
+        <div>
+          <p className="text-sm uppercase tracking-[0.2em] text-gray-500">
+            Notes
+          </p>
+          <h1 className="mt-2 text-3xl font-semibold text-gray-900">
+            Application {applicationId}
+          </h1>
+        </div>
+        <Checkbox
+          checked={hideInternal}
+          onCheckedChange={(value) => setHideInternal(Boolean(value))}
+          label="Hide internal notes"
+          containerClassName="items-center text-sm text-gray-700"
+        />
       </header>
 
       {!apiKey ? (
@@ -68,7 +78,9 @@ export default function HSApplicationNotesPage() {
         </div>
       ) : notes && notes.length > 0 ? (
         <ul className="space-y-4">
-          {notes.map((note) => (
+          {notes
+            .filter((note) => (hideInternal ? !note.isInternal : true))
+            .map((note) => (
             <li
               key={note.id}
               className={`rounded-2xl border border-gray-200 p-5 shadow-sm ${
