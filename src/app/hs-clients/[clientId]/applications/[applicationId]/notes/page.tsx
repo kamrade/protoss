@@ -18,34 +18,29 @@ export default function HSApplicationNotesPage() {
   const [error, setError] = React.useState<string | null>(null);
   const [hideInternal, setHideInternal] = React.useState(false);
 
-  React.useEffect(() => {
+  const fetchNotes = React.useCallback(async () => {
     if (!apiKey || !applicationId) {
       setNotes(null);
       setError(apiKey ? null : "Provide API key to fetch notes.");
       return;
     }
 
-    let active = true;
     setLoading(true);
     setError(null);
 
-    getApplicationNotes(apiKey, applicationId)
-      .then((data) => {
-        if (!active) return;
-        setNotes(data);
-        setLoading(false);
-        console.log(data);
-      })
-      .catch((err) => {
-        if (!active) return;
-        setError(err instanceof Error ? err.message : String(err));
-        setLoading(false);
-      });
-
-    return () => {
-      active = false;
-    };
+    try {
+      const data = await getApplicationNotes(apiKey, applicationId);
+      setNotes(data);
+    } catch (err) {
+      setError(err instanceof Error ? err.message : String(err));
+    } finally {
+      setLoading(false);
+    }
   }, [apiKey, applicationId]);
+
+  React.useEffect(() => {
+    fetchNotes();
+  }, [fetchNotes]);
 
   return (
     <main className="mx-auto max-w-5xl px-6 space-y-6">
@@ -81,7 +76,7 @@ export default function HSApplicationNotesPage() {
           {notes
             .filter((note) => (hideInternal ? !note.isInternal : true))
             .map((note) => (
-              <HSNoteCard key={note.id} note={note} />
+              <HSNoteCard key={note.id} note={note} onNoteUpdated={fetchNotes} />
             ))}
         </ul>
       ) : (

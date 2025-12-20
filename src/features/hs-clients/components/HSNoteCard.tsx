@@ -8,9 +8,10 @@ import { HSNoteEditModal } from "./HSNoteEditModal";
 
 interface HSNoteCardProps {
   note: INote;
+  onNoteUpdated?: () => void | Promise<void>;
 }
 
-export function HSNoteCard({ note }: HSNoteCardProps) {
+export function HSNoteCard({ note, onNoteUpdated }: HSNoteCardProps) {
   const documents: ICaseDocument[] =
     // API may return either `document` or `documents`; support both.
     (note as any).documents ?? note.documents ?? [];
@@ -90,6 +91,7 @@ export function HSNoteCard({ note }: HSNoteCardProps) {
         note={note}
         open={isEditModalOpen}
         onOpenChange={setIsEditModalOpen}
+        onSaved={onNoteUpdated}
       />
     </li>
   );

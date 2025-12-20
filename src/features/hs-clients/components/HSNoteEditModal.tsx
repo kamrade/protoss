@@ -33,9 +33,10 @@ interface HSNoteEditModalProps {
   open: boolean;
   onOpenChange: (open: boolean) => void;
   note: INote;
+  onSaved?: () => void | Promise<void>;
 }
 
-export function HSNoteEditModal({ open, onOpenChange, note }: HSNoteEditModalProps) {
+export function HSNoteEditModal({ open, onOpenChange, note, onSaved }: HSNoteEditModalProps) {
   const { apiKey } = useApiKey();
   const noteBodyHtml = React.useMemo(() => decodeNoteText(note.text), [note.text]);
   const placeholderHtml = "<p class='text-gray-400'>No content available</p>";
@@ -93,6 +94,9 @@ export function HSNoteEditModal({ open, onOpenChange, note }: HSNoteEditModalPro
         text: encodeNoteText(textContent),
         title,
       });
+      if (onSaved) {
+        await onSaved();
+      }
       onOpenChange(false);
     } catch (error) {
       const message =
@@ -110,6 +114,7 @@ export function HSNoteEditModal({ open, onOpenChange, note }: HSNoteEditModalPro
     note.id,
     note.isDraft,
     onOpenChange,
+    onSaved,
     title,
   ]);
 
