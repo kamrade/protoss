@@ -52,7 +52,11 @@ export function HSNoteCard({ note, onNoteUpdated }: HSNoteCardProps) {
               Internal
             </span>
           )}
-          {note.isDraft && <span>Draft</span>}
+          {note.isDraft && (
+            <span className="rounded-full bg-gray-200 px-3 py-1 text-[10px] font-semibold uppercase tracking-wide text-gray-800">
+              Draft
+            </span>
+          )}
           <button
             type="button"
             onClick={() => setIsEditModalOpen(true)}

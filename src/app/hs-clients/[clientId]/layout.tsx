@@ -1,8 +1,8 @@
 "use client";
 
 import * as React from "react";
-import { useParams } from "next/navigation";
 import Link from "next/link";
+import { useParams, usePathname, useRouter } from "next/navigation";
 import { useApiKey } from "@/context/api-key";
 import { getHSClients, getHSApplications } from "@/features/hs-clients/api";
 import {
@@ -28,6 +28,8 @@ export default function ClientPageLayout({ children }: { children: React.ReactNo
   const abortRef = React.useRef(false);
 
   const { clientId } = useParams<{ clientId: string }>();
+  const pathname = usePathname();
+  const router = useRouter();
 
   const loadClientData = React.useCallback(async () => {
     if (!apiKey || !clientId) {
@@ -72,6 +74,19 @@ export default function ClientPageLayout({ children }: { children: React.ReactNo
     };
   }, [loadClientData]);
 
+  const overviewHref = client ? `/hs-clients/${client.id}/overview` : '';
+
+  React.useEffect(() => {
+    if (
+      client &&
+      clientId &&
+      overviewHref &&
+      pathname === `/hs-clients/${clientId}`
+    ) {
+      router.replace(overviewHref);
+    }
+  }, [client, clientId, overviewHref, pathname, router]);
+
   if (!apiKey) {
     return (
       <div className="mx-auto max-w-3xl px-6 py-10 text-center">
@@ -103,8 +118,6 @@ export default function ClientPageLayout({ children }: { children: React.ReactNo
   if (!client) {
     return null;
   }
-
-  const overviewHref = `/hs-clients/${client.id}/overview`;
 
   const getApplicationTitle = (app: IApplication) => {
     return `${app.kind} ${app.categoryId ? getCategoryShortNameById(app.categoryId) : ''}`;
@@ -184,50 +197,7 @@ export default function ClientPageLayout({ children }: { children: React.ReactNo
             <div>
               {children}
             </div>
-            {/* <section className="mt-8 grid grid-cols-1 gap-6 md:grid-cols-3">
-              <div className="rounded-2xl border border-gray-200 bg-white p-6">
-                <h3 className="text-sm font-semibold text-gray-900">Contact</h3>
-                <p className="mt-2 text-sm text-gray-600">
-                  {client.contactFirstName} {client.contactMiddleName}{" "}
-                  {client.contactLastName}
-                </p>
-                <p className="mt-1 text-sm text-gray-600">{client.contactEmail}</p>
-                <p className="mt-1 text-sm text-gray-600">{client.contactPhone}</p>
-              </div>
 
-              <div className="rounded-2xl border border-gray-200 bg-white p-6 md:col-span-2">
-                <h3 className="text-sm font-semibold text-gray-900">Overview</h3>
-                <div className="mt-4 grid grid-cols-1 gap-2 sm:grid-cols-2">
-                  <div>
-                    <p className="text-xs text-gray-500">Sales manager</p>
-                    <p className="text-sm text-gray-700">{client.salesManager}</p>
-                  </div>
-                  <div>
-                    <p className="text-xs text-gray-500">Referral partner</p>
-                    <p className="text-sm text-gray-700">
-                      {client.referralPartner}
-                    </p>
-                  </div>
-                </div>
-
-                <div className="mt-6">
-                  <p className="text-xs text-gray-500">Applications</p>
-                  <ul className="mt-2 grid gap-2">
-                    {applications.map((app) => (
-                      <li key={app.id} className="inline-flex flex-col gap-0.5">
-                        <span className="text-sm text-gray-700">{app.number}</span>
-                        <span className="text-xs text-gray-500">{app.kind}</span>
-                        {app.categoryId ? (
-                          <span className="text-xs text-gray-500">
-                            {getCategoryShortNameById(app.categoryId)}
-                          </span>
-                        ) : null}
-                      </li>
-                    ))}
-                  </ul>
-                </div>
-              </div>
-            </section> */}
           </div>
         </div>
       </main>
