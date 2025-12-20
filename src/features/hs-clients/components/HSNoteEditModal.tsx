@@ -4,6 +4,8 @@ import * as React from "react";
 import type { INote } from "@/features/hs-clients";
 import { decodeNoteText } from "@/utils";
 import { Button } from "@/components/Button";
+import { TextField } from "@/components/TextField";
+import { Checkbox } from "@/components/Checkbox";
 import { EditorContent, useEditor } from "@tiptap/react";
 import StarterKit from "@tiptap/starter-kit";
 import {
@@ -36,6 +38,10 @@ export function HSNoteEditModal({ open, onOpenChange, note }: HSNoteEditModalPro
   const placeholderHtml = "<p class='text-gray-400'>No content available</p>";
   const initialContent = noteBodyHtml || placeholderHtml;
 
+  const [title, setTitle] = React.useState(note.title ?? "");
+  const [isInternal, setIsInternal] = React.useState(!!note.isInternal);
+  const [isSummary, setIsSummary] = React.useState(!!note.isSummary);
+
   const editor = useEditor({
     extensions: [StarterKit],
     content: initialContent,
@@ -52,8 +58,14 @@ export function HSNoteEditModal({ open, onOpenChange, note }: HSNoteEditModalPro
     if (!editor) {
       return;
     }
-    editor.commands.setContent(initialContent, false);
+    editor.commands.setContent(initialContent, { emitUpdate: false });
   }, [editor, initialContent]);
+
+  React.useEffect(() => {
+    setTitle(note.title ?? "");
+    setIsInternal(!!note.isInternal);
+    setIsSummary(!!note.isSummary);
+  }, [note]);
 
   const handleSave = React.useCallback(() => {
     // TODO: wire this handler to persist editor content via API when available.
@@ -69,6 +81,26 @@ export function HSNoteEditModal({ open, onOpenChange, note }: HSNoteEditModalPro
         <DialogDescription className="text-sm text-gray-600">
           Update note details or metadata once this editor is wired up.
         </DialogDescription>
+        <div className="space-y-4">
+          <TextField
+            label="Title"
+            value={title}
+            onChange={(event) => setTitle(event.target.value)}
+            placeholder="Enter note title"
+          />
+          <div className="flex flex-wrap gap-4">
+            <Checkbox
+              label="Internal"
+              checked={isInternal}
+              onCheckedChange={(value) => setIsInternal(Boolean(value))}
+            />
+            <Checkbox
+              label="Summary"
+              checked={isSummary}
+              onCheckedChange={(value) => setIsSummary(Boolean(value))}
+            />
+          </div>
+        </div>
         <div className="space-y-3">
           <div className="flex flex-wrap gap-2 rounded-xl border border-gray-200 bg-gray-50/80 p-2">
             <ToolbarButton

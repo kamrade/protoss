@@ -19,7 +19,6 @@ export function HSNoteCard({ note }: HSNoteCardProps) {
     decodeNoteText(note.text) || "<p>No description provided.</p>";
 
   const [isEditModalOpen, setIsEditModalOpen] = React.useState(false);
-  const shouldShowEditBadge = note.isSummary || note.isInternal;
 
   return (
     <li
@@ -53,17 +52,15 @@ export function HSNoteCard({ note }: HSNoteCardProps) {
             </span>
           )}
           {note.isDraft && <span>Draft</span>}
-          {shouldShowEditBadge && (
-            <button
-              type="button"
-              onClick={() => setIsEditModalOpen(true)}
-              className="flex items-center gap-1 rounded-full border border-gray-200 bg-white px-3 py-1 text-[10px] font-semibold uppercase tracking-wide text-gray-800 transition hover:border-gray-300 hover:bg-gray-50 focus-visible:outline focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-gray-900"
-              aria-label="Edit note"
-            >
-              <Pencil1Icon className="h-3 w-3" />
-              <span>Edit</span>
-            </button>
-          )}
+          <button
+            type="button"
+            onClick={() => setIsEditModalOpen(true)}
+            className="flex items-center gap-1 rounded-full border border-gray-200 bg-white px-3 py-1 text-[10px] font-semibold uppercase tracking-wide text-gray-800 transition hover:border-gray-300 hover:bg-gray-50 focus-visible:outline focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-gray-900"
+            aria-label="Edit note"
+          >
+            <Pencil1Icon className="h-3 w-3" />
+            <span>Edit</span>
+          </button>
         </div>
       </div>
 

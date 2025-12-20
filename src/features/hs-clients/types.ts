@@ -112,7 +112,7 @@ export interface INoteUpdateHeader {
   filterParams: {};
   isDraft: boolean;
   isInternal: boolean;
-  isSummary: false;
+  isSummary: boolean;
   referenceId: unknown;
   referenceType: unknown;
   taggedUsers: unknown[];
