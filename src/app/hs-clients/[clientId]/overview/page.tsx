@@ -6,7 +6,7 @@ export default function OverviewPage() {
   const client = useClientContext();
 
   const renderedFields = (
-    <div className="space-y-6 rounded-2xl border border-gray-200 bg-white p-8 shadow-sm">
+    <div className="space-y-6">
 
       <FieldRow label="Company" value={client.companyName} />
       <FieldRow label="Business address" value={client.businessAddress} />
@@ -40,8 +40,7 @@ export default function OverviewPage() {
   );
 
   return (
-    <main className="mx-auto max-w-5xl px-6 py-8">
-      <p className="text-sm uppercase tracking-[0.25em] text-gray-500">Overview</p>
+    <main className="mx-auto max-w-5xl px-3">
       <div className="mt-6">{renderedFields}</div>
     </main>
   );
@@ -54,11 +53,9 @@ interface FieldRowProps {
 
 function FieldRow({ label, value }: FieldRowProps) {
   return (
-    <div>
-      <p className="text-xs text-gray-500">
-        {label}
-      </p>
-      <p className="text-sm text-gray-900">{value || "—"}</p>
+    <div className="grid grid-cols-[150px_1fr] gap-2 text-sm text-gray-900 border-b border-dashed border-gray-200 pb-3 last:border-b-0 last:pb-0">
+      <p className="text-sm text-gray-500">{label}</p>
+      <p>{value || "—"}</p>
     </div>
   );
 }
