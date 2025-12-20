@@ -107,3 +107,15 @@ export interface INote extends IBaseEntity {
   isInternal: boolean;
   documents: ICaseDocument[];
 }
+
+export interface INoteUpdateHeader {
+  filterParams: {};
+  isDraft: boolean;
+  isInternal: boolean;
+  isSummary: false;
+  referenceId: unknown;
+  referenceType: unknown;
+  taggedUsers: unknown[];
+  text: string;
+  title: string;
+}

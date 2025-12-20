@@ -7,6 +7,15 @@ import { Button } from "@/components/Button";
 import { EditorContent, useEditor } from "@tiptap/react";
 import StarterKit from "@tiptap/starter-kit";
 import {
+  CodeIcon,
+  CounterClockwiseClockIcon,
+  FontBoldIcon,
+  FontItalicIcon,
+  ListBulletIcon,
+  QuoteIcon,
+  ReloadIcon,
+} from "@radix-ui/react-icons";
+import {
   Dialog,
   DialogClose,
   DialogContent,
@@ -64,67 +73,59 @@ export function HSNoteEditModal({ open, onOpenChange, note }: HSNoteEditModalPro
           <div className="flex flex-wrap gap-2 rounded-xl border border-gray-200 bg-gray-50/80 p-2">
             <ToolbarButton
               label="Bold"
+              icon={<FontBoldIcon className="h-4 w-4" />}
               active={editor?.isActive("bold")}
               onClick={() => editor?.chain().focus().toggleBold().run()}
               disabled={!editor?.can().chain().focus().toggleBold().run()}
-            >
-              Bold
-            </ToolbarButton>
+            />
             <ToolbarButton
               label="Italic"
+              icon={<FontItalicIcon className="h-4 w-4" />}
               active={editor?.isActive("italic")}
               onClick={() => editor?.chain().focus().toggleItalic().run()}
               disabled={!editor?.can().chain().focus().toggleItalic().run()}
-            >
-              Italic
-            </ToolbarButton>
+            />
             <ToolbarButton
               label="Bullet list"
+              icon={<ListBulletIcon className="h-4 w-4" />}
               active={editor?.isActive("bulletList")}
               onClick={() => editor?.chain().focus().toggleBulletList().run()}
               disabled={!editor?.can().chain().focus().toggleBulletList().run()}
-            >
-              • List
-            </ToolbarButton>
+            />
             <ToolbarButton
               label="Ordered list"
+              icon={<ListBulletIcon className="h-4 w-4" />}
               active={editor?.isActive("orderedList")}
               onClick={() => editor?.chain().focus().toggleOrderedList().run()}
               disabled={!editor?.can().chain().focus().toggleOrderedList().run()}
-            >
-              1. List
-            </ToolbarButton>
+            />
             <ToolbarButton
               label="Quote"
+              icon={<QuoteIcon className="h-4 w-4" />}
               active={editor?.isActive("blockquote")}
               onClick={() => editor?.chain().focus().toggleBlockquote().run()}
               disabled={!editor?.can().chain().focus().toggleBlockquote().run()}
-            >
-              Quote
-            </ToolbarButton>
+            />
             <ToolbarButton
               label="Code"
+              icon={<CodeIcon className="h-4 w-4" />}
               active={editor?.isActive("codeBlock")}
               onClick={() => editor?.chain().focus().toggleCodeBlock().run()}
               disabled={!editor?.can().chain().focus().toggleCodeBlock().run()}
-            >
-              Code
-            </ToolbarButton>
+            />
             <div className="ml-auto flex gap-2">
               <ToolbarButton
                 label="Undo"
+                icon={<CounterClockwiseClockIcon className="h-4 w-4" />}
                 onClick={() => editor?.chain().focus().undo().run()}
                 disabled={!editor?.can().chain().focus().undo().run()}
-              >
-                Undo
-              </ToolbarButton>
+              />
               <ToolbarButton
                 label="Redo"
+                icon={<ReloadIcon className="h-4 w-4" />}
                 onClick={() => editor?.chain().focus().redo().run()}
                 disabled={!editor?.can().chain().focus().redo().run()}
-              >
-                Redo
-              </ToolbarButton>
+              />
             </div>
           </div>
           <EditorContent editor={editor} />
@@ -144,9 +145,12 @@ export function HSNoteEditModal({ open, onOpenChange, note }: HSNoteEditModalPro
 
 interface ToolbarButtonProps extends React.ButtonHTMLAttributes<HTMLButtonElement> {
   active?: boolean;
+  icon?: React.ReactNode;
+  label: string;
 }
 
-function ToolbarButton({ active, children, ...props }: ToolbarButtonProps) {
+function ToolbarButton({ active, icon, label, ...props }: ToolbarButtonProps) {
+  const content = icon ?? <span className="text-xs">{label}</span>;
   return (
     <button
       type="button"
@@ -155,9 +159,14 @@ function ToolbarButton({ active, children, ...props }: ToolbarButtonProps) {
           ? "bg-gray-900 text-white"
           : "bg-white text-gray-800 hover:bg-gray-100 active:bg-gray-200"
       } disabled:cursor-not-allowed disabled:border-gray-200 disabled:bg-gray-100 disabled:text-gray-400`}
+      aria-label={label}
+      title={label}
       {...props}
     >
-      {children}
+      <span className="flex items-center justify-center gap-1.5">
+        {content}
+        <span className="sr-only">{label}</span>
+      </span>
     </button>
   );
 }
