@@ -101,13 +101,13 @@ export default function HSApplicationNotesPage() {
                 }}
               />
 
-              {note.document && note.document.length > 0 && (
+              {note.documents && note.documents.length > 0 && (
                 <div className="mt-4">
                   <p className="text-xs font-semibold uppercase tracking-wide text-gray-500">
                     Documents
                   </p>
                   <ul className="mt-2 space-y-1">
-                    {note.document.map((doc) => (
+                    {note.documents.map((doc) => (
                       <li
                         key={doc.id}
                         className="text-sm text-gray-600"

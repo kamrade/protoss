@@ -18,50 +18,59 @@ import {
   HSSidebarSubtitle,
 } from "@/features/hs-clients";
 
-
-export default function ClientPageLayout({ children } : {
-  children: React.ReactNode;
-}) {
+export default function ClientPageLayout({ children }: { children: React.ReactNode }) {
 
   const { apiKey } = useApiKey();
   const [client, setClient] = React.useState<IHSClientOverview | null>(null);
   const [applications, setApplications] = React.useState<IApplication[]>([]);
   const [loading, setLoading] = React.useState(false);
   const [error, setError] = React.useState<string | null>(null);
+  const abortRef = React.useRef(false);
 
   const { clientId } = useParams<{ clientId: string }>();
 
-  React.useEffect(() => {
-    if (!apiKey) return;
-    let active = true;
+  const loadClientData = React.useCallback(async () => {
+    if (!apiKey || !clientId) {
+      return;
+    }
+
     setLoading(true);
     setError(null);
     setApplications([]);
 
-    (async () => {
+    try {
+      const clientData = (await getHSClients({ apiKey, clientId })) as IHSClientOverview;
+      if (abortRef.current) return;
+      setClient(clientData);
 
-      try {
-        const clientData = (await getHSClients({ apiKey, clientId })) as IHSClientOverview;
-        if (!active) return;
-        setClient(clientData);
-
-        const applicationsResponse = await getHSApplications( apiKey, "createdDate", "desc", "", 0, 80, clientData.id );
-        if (!active) return;
-        setApplications(applicationsResponse.content);
-      } catch (err) {
-        if (!active) return;
-        setError(err instanceof Error ? err.message : String(err));
-      } finally {
-        if (active) {
-          setLoading(false);
-        }
+      const applicationsResponse = await getHSApplications(
+        apiKey,
+        "createdDate",
+        "desc",
+        "",
+        0,
+        80,
+        clientData.id
+      );
+      if (abortRef.current) return;
+      setApplications(applicationsResponse.content);
+    } catch (err) {
+      if (abortRef.current) return;
+      setError(err instanceof Error ? err.message : String(err));
+    } finally {
+      if (!abortRef.current) {
+        setLoading(false);
       }
-    })();
-
-    return () => {
-      active = false;
-    };
+    }
   }, [apiKey, clientId]);
+
+  React.useEffect(() => {
+    abortRef.current = false;
+    loadClientData();
+    return () => {
+      abortRef.current = true;
+    };
+  }, [loadClientData]);
 
   if (!apiKey) {
     return (
@@ -122,7 +131,20 @@ export default function ClientPageLayout({ children } : {
               Status:
               <span className="capitalize">{client.status.toLowerCase()}</span>
             </Badge>
-            <Badge variant="subtle">Reload data</Badge>
+            <Badge
+              variant="subtle"
+              asChild
+              className={loading ? "opacity-60" : ""}
+            >
+              <button
+                type="button"
+                onClick={loadClientData}
+                disabled={loading}
+                className="inline-flex items-center gap-1"
+              >
+                Reload data
+              </button>
+            </Badge>
           </div>
         </header>
       </div>

@@ -105,5 +105,5 @@ export interface INote extends IBaseEntity {
   isSummary: boolean;
   isDraft: boolean;
   isInternal: boolean;
-  document: ICaseDocument[];
+  documents: ICaseDocument[];
 }
